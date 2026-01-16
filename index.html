@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ruta Comercial GT v8</title>
+    <title>Ruta Comercial GT v9</title>
     <style>
         /* ESTILOS BASE */
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f2f4f8; margin: 0; padding: 0; padding-bottom: 80px; }
@@ -28,6 +28,7 @@
         .btn-warning { background-color: #fbc02d; color: #333; }
         .btn-danger { background-color: #d32f2f; }
         .btn-dark { background-color: #263238; }
+        .btn-info { background-color: #0288d1; }
 
         /* Botones Pequeños */
         .btn-icon { padding: 6px 10px; border-radius: 4px; border: none; cursor: pointer; color: white; margin-left: 2px; font-size: 14px; }
@@ -63,6 +64,15 @@
         .call-option { color: #4285F4; }
         .other-option { color: #757575; }
 
+        /* Buscador */
+        .search-container { position: relative; margin-top: 10px; }
+        .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #666; }
+        .search-input { padding-left: 35px !important; }
+
+        /* Indicador de optimización */
+        .route-optimized { background: #e8f5e9 !important; border-left: 5px solid #2e7d32 !important; }
+        .route-distance { font-size: 0.8em; color: #666; margin-left: 5px; }
+
         @media print {
             .no-print, .nav-bar, header { display: none !important; }
             .card { box-shadow: none; border: none; padding: 0; margin: 0; }
@@ -84,12 +94,16 @@
             
             <div class="card" style="margin-top:15px;">
                 <h3>Cartera de Clientes</h3>
-                <label style="margin-top:0;">Filtrar por Departamento:</label>
                 
+                <label style="margin-top:0;">Filtrar por Departamento:</label>
                 <select id="filtroDeptDash" onchange="renderDashboard()">
                     <option value="">Mostrar Todos</option>
-                    <!-- Los departamentos se cargarán con JavaScript -->
                 </select>
+                
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="buscadorDashboard" class="search-input" placeholder="Buscar por negocio, teléfono o encargado..." oninput="renderDashboard()">
+                </div>
 
                 <div id="listaClientes" style="margin-top:15px;"></div>
                 <p id="msgVacio" style="text-align:center; color:#777; padding:20px; display:none;">No hay clientes registrados.</p>
@@ -100,7 +114,16 @@
             <div class="card" style="background:#e3f2fd; border:1px solid #90caf9;">
                 <h3 style="color:#1565c0; border:none;">📍 Ruta del Día</h3>
                 <p id="txtRuta" style="font-size:0.9em; color:#555;">Selecciona clientes en el inicio para armar tu ruta.</p>
-                <button class="btn btn-primary" style="background:#0277bd;" onclick="abrirMapaRuta()">🗺️ Abrir Ruta en Google Maps</button>
+                
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button class="btn btn-primary" style="background:#0277bd; flex: 1;" onclick="abrirMapaRuta()">🗺️ Abrir Ruta en Google Maps</button>
+                    <button class="btn btn-success" style="flex: 1;" onclick="optimizarRuta()">🔢 Optimizar Ruta por Proximidad</button>
+                </div>
+                
+                <div style="margin-top: 10px; font-size: 0.8em; color: #666;">
+                    <span id="rutaInfo">0 clientes en ruta</span>
+                    <span id="distanciaTotal" style="margin-left: 10px;"></span>
+                </div>
             </div>
             <div id="listaRutaContainer"></div>
         </div>
@@ -204,8 +227,11 @@
                 <h3>Generador de Reportes</h3>
                 <p style="font-size:0.9em; color:#555;">Selecciona el informe:</p>
                 
-                <button class="btn btn-success" onclick="reporteDiario()">📄 REPORTE VISITAS DEL DÍA</button>
-                <button class="btn btn-dark" onclick="reporteTotal()">📂 CARTERA TOTAL DE CLIENTES</button>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-success" style="flex: 1;" onclick="reporteDiario()">📄 REPORTE VISITAS DEL DÍA</button>
+                    <button class="btn btn-dark" style="flex: 1;" onclick="reporteTotal()">📂 CARTERA TOTAL DE CLIENTES</button>
+                    <button class="btn btn-info" style="flex: 1;" onclick="exportarCSV()">📥 EXPORTAR A CSV</button>
+                </div>
                 
                 <hr style="margin:20px 0;">
                 
@@ -253,7 +279,10 @@
                 <div id="resumenReporte" style="margin-top:15px; font-weight:bold; text-align:right;"></div>
             </div>
 
-            <button class="btn btn-secondary no-print" onclick="window.print()">🖨️ IMPRIMIR / PDF</button>
+            <div class="no-print" style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn btn-secondary" onclick="window.print()">🖨️ IMPRIMIR / PDF</button>
+                <button class="btn btn-info" onclick="exportarCSV()">📥 EXPORTAR A CSV</button>
+            </div>
         </div>
 
     </div>
@@ -274,9 +303,11 @@
             "Santa Rosa", "Sololá", "Suchitepéquez", "Totonicapán", "Zacapa"
         ];
 
-        let db = JSON.parse(localStorage.getItem('db_clientes_v8')) || [];
-        let ruta = JSON.parse(localStorage.getItem('db_ruta_v8')) || [];
+        let db = JSON.parse(localStorage.getItem('db_clientes_v9')) || [];
+        let ruta = JSON.parse(localStorage.getItem('db_ruta_v9')) || [];
         let filtrosReporteActual = { tipo: '', fecha: null, depto: null };
+        let rutaOptimizada = false;
+        let ubicacionActual = null;
 
         // --- INICIALIZACIÓN ---
         document.addEventListener("DOMContentLoaded", () => {
@@ -347,17 +378,29 @@
             else mostrar('view-dashboard');
         }
 
-        // --- DASHBOARD ---
+        // --- DASHBOARD CON BUSCADOR ---
         function renderDashboard() {
             const list = document.getElementById('listaClientes');
-            const filtro = document.getElementById('filtroDeptDash').value;
+            const filtroDepto = document.getElementById('filtroDeptDash').value;
+            const busqueda = document.getElementById('buscadorDashboard').value.toLowerCase();
             const hoy = new Date().toISOString().split('T')[0];
             list.innerHTML = '';
 
             // Filtrar por departamento si se ha seleccionado uno
-            let data = db;
-            if(filtro) {
-                data = db.filter(c => c.departamento === filtro);
+            let data = [...db];
+            
+            if(filtroDepto) {
+                data = data.filter(c => c.departamento === filtroDepto);
+            }
+            
+            // Aplicar búsqueda si hay texto
+            if(busqueda) {
+                data = data.filter(c => 
+                    (c.negocio && c.negocio.toLowerCase().includes(busqueda)) ||
+                    (c.telefono && c.telefono.includes(busqueda)) ||
+                    (c.encargado && c.encargado.toLowerCase().includes(busqueda)) ||
+                    (c.direccion && c.direccion.toLowerCase().includes(busqueda))
+                );
             }
             
             // Ordenar: Depto A-Z -> Negocio A-Z
@@ -371,6 +414,9 @@
 
             if(data.length === 0) { 
                 document.getElementById('msgVacio').style.display='block'; 
+                document.getElementById('msgVacio').textContent = busqueda ? 
+                    'No se encontraron clientes que coincidan con la búsqueda.' : 
+                    'No hay clientes registrados.';
                 return; 
             }
             document.getElementById('msgVacio').style.display='none';
@@ -408,14 +454,18 @@
             actualizarBadge();
         }
 
-        // --- RUTA ---
+        // --- RUTA CON OPTIMIZACIÓN ---
         function toggleRuta(id) {
             const i = ruta.indexOf(id);
             if(i < 0) ruta.push(id); 
             else ruta.splice(i,1);
-            localStorage.setItem('db_ruta_v8', JSON.stringify(ruta));
+            rutaOptimizada = false; // Resetear optimización si se modifica la ruta
+            localStorage.setItem('db_ruta_v9', JSON.stringify(ruta));
             renderDashboard();
             actualizarBadge();
+            if (!document.getElementById('view-ruta').classList.contains('hidden')) {
+                renderRuta();
+            }
         }
         
         function actualizarBadge() {
@@ -430,73 +480,227 @@
         
         function limpiarRuta() {
             if(confirm("¿Limpiar toda la ruta pendiente?")) { 
-                ruta=[]; 
-                localStorage.setItem('db_ruta_v8', JSON.stringify(ruta)); 
+                ruta = []; 
+                rutaOptimizada = false;
+                localStorage.setItem('db_ruta_v9', JSON.stringify(ruta)); 
                 renderDashboard(); 
                 renderRuta(); 
                 actualizarBadge(); 
             }
         }
         
+        // Función Haversine para calcular distancia entre dos puntos GPS
+        function calcularDistanciaHaversine(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radio de la Tierra en km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c; // Distancia en km
+        }
+        
+        // Optimizar ruta por proximidad
+        function optimizarRuta() {
+            const items = db.filter(c => ruta.includes(c.id));
+            
+            if(items.length < 2) {
+                return alert("Se necesitan al menos 2 clientes en la ruta para optimizar.");
+            }
+            
+            // Verificar que todos los clientes tengan GPS
+            const clientesSinGPS = items.filter(c => !c.lat || c.lat === "MANUAL");
+            if(clientesSinGPS.length > 0) {
+                alert(`⚠️ ${clientesSinGPS.length} cliente(s) no tienen GPS y no se incluirán en la optimización.`);
+            }
+            
+            const clientesConGPS = items.filter(c => c.lat && c.lat !== "MANUAL");
+            
+            if(clientesConGPS.length < 2) {
+                return alert("Se necesitan al menos 2 clientes con GPS para optimizar la ruta.");
+            }
+            
+            // Obtener ubicación actual
+            document.getElementById('gpsTxt').textContent = "Buscando ubicación para optimizar...";
+            
+            if(navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        ubicacionActual = {
+                            lat: position.coords.latitude,
+                            lon: position.coords.longitude
+                        };
+                        
+                        // Algoritmo simple: ordenar por distancia a la ubicación actual
+                        clientesConGPS.sort((a, b) => {
+                            const distA = calcularDistanciaHaversine(
+                                ubicacionActual.lat, ubicacionActual.lon,
+                                parseFloat(a.lat), parseFloat(a.lng)
+                            );
+                            const distB = calcularDistanciaHaversine(
+                                ubicacionActual.lat, ubicacionActual.lon,
+                                parseFloat(b.lat), parseFloat(b.lng)
+                            );
+                            return distA - distB;
+                        });
+                        
+                        // Reconstruir la ruta con el orden optimizado
+                        const nuevosIds = clientesConGPS.map(c => c.id);
+                        // Agregar los clientes sin GPS al final
+                        const idsSinGPS = clientesSinGPS.map(c => c.id);
+                        ruta = [...nuevosIds, ...idsSinGPS];
+                        
+                        rutaOptimizada = true;
+                        localStorage.setItem('db_ruta_v9', JSON.stringify(ruta));
+                        
+                        renderRuta();
+                        alert(`✅ Ruta optimizada por proximidad. Ordenados ${clientesConGPS.length} clientes por distancia.`);
+                    },
+                    error => {
+                        alert("No se pudo obtener la ubicación actual. Usando orden por departamento.");
+                        // Ordenar por departamento si no hay GPS
+                        ordenarRutaPorDepartamento();
+                    },
+                    {enableHighAccuracy: true, timeout: 10000}
+                );
+            } else {
+                alert("El navegador no soporta geolocalización. Usando orden por departamento.");
+                ordenarRutaPorDepartamento();
+            }
+        }
+        
+        function ordenarRutaPorDepartamento() {
+            const items = db.filter(c => ruta.includes(c.id));
+            
+            // Ordenar por departamento y luego por negocio
+            items.sort((a,b) => {
+                if(a.departamento > b.departamento) return 1;
+                if(a.departamento < b.departamento) return -1;
+                if(a.negocio > b.negocio) return 1;
+                if(a.negocio < b.negocio) return -1;
+                return 0;
+            });
+            
+            // Reconstruir ruta con nuevo orden
+            ruta = items.map(c => c.id);
+            rutaOptimizada = false;
+            localStorage.setItem('db_ruta_v9', JSON.stringify(ruta));
+            renderRuta();
+        }
+        
         function renderRuta() {
             const con = document.getElementById('listaRutaContainer'); 
+            const rutaInfo = document.getElementById('rutaInfo');
+            const distanciaTotalElem = document.getElementById('distanciaTotal');
             con.innerHTML='';
+            
             const items = db.filter(c => ruta.includes(c.id));
             
             if(items.length===0) { 
                 con.innerHTML='<p style="text-align:center; padding:20px; color:#777;">No hay clientes en la ruta.</p>'; 
+                rutaInfo.textContent = '0 clientes en ruta';
+                distanciaTotalElem.textContent = '';
                 return; 
             }
             
-            // Agrupar por departamento
-            const agrupados = {};
-            items.forEach(c => {
-                if(!agrupados[c.departamento]) {
-                    agrupados[c.departamento] = [];
-                }
-                agrupados[c.departamento].push(c);
-            });
+            rutaInfo.textContent = `${items.length} cliente(s) en ruta`;
             
-            // Mostrar por departamento
-            Object.keys(agrupados).sort().forEach(depto => {
-                const divHeader = document.createElement('div');
-                divHeader.className = 'card';
-                divHeader.style.background = '#f5f5f5';
-                divHeader.style.marginTop = '10px';
-                divHeader.innerHTML = `<h4 style="margin:0; color:#1565c0;">${depto}</h4>`;
-                con.appendChild(divHeader);
+            // Calcular distancia total si la ruta está optimizada y hay GPS
+            let distanciaTotal = 0;
+            if(rutaOptimizada && items.length > 1) {
+                for(let i = 0; i < items.length - 1; i++) {
+                    const clienteActual = items[i];
+                    const clienteSiguiente = items[i + 1];
+                    
+                    if(clienteActual.lat && clienteActual.lat !== "MANUAL" &&
+                       clienteSiguiente.lat && clienteSiguiente.lat !== "MANUAL") {
+                        distanciaTotal += calcularDistanciaHaversine(
+                            parseFloat(clienteActual.lat), parseFloat(clienteActual.lng),
+                            parseFloat(clienteSiguiente.lat), parseFloat(clienteSiguiente.lng)
+                        );
+                    }
+                }
                 
-                agrupados[depto].forEach(c => {
-                    const div = document.createElement('div');
-                    div.className = 'card';
-                    div.style.borderLeft = '5px solid #1976d2';
-                    div.style.marginTop = '5px';
-                    div.innerHTML = `
-                        <b>${c.negocio}</b><br>
-                        <small>${c.direccion}</small>
-                        <div style="margin-top:5px; font-size:0.8em;">
-                            ${c.contactoWhatsApp ? '<span style="color:#25D366; margin-right:10px;">💚 WhatsApp</span>' : ''}
-                            ${c.contactoLlamada ? '<span style="color:#4285F4; margin-right:10px;">📞 Llamada</span>' : ''}
-                            ${c.contactoOtro ? '<span style="color:#757575;">🔘 Otro</span>' : ''}
+                if(distanciaTotal > 0) {
+                    distanciaTotalElem.textContent = `📏 Distancia total: ${distanciaTotal.toFixed(1)} km`;
+                } else {
+                    distanciaTotalElem.textContent = '';
+                }
+            } else {
+                distanciaTotalElem.textContent = '';
+            }
+            
+            // Mostrar clientes en el orden actual
+            items.forEach((c, index) => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.style.borderLeft = '5px solid #1976d2';
+                div.style.marginTop = '5px';
+                
+                if(rutaOptimizada) {
+                    div.classList.add('route-optimized');
+                }
+                
+                let infoDistancia = '';
+                if(rutaOptimizada && index > 0 && items[index-1].lat && items[index-1].lat !== "MANUAL" &&
+                   c.lat && c.lat !== "MANUAL") {
+                    const distancia = calcularDistanciaHaversine(
+                        parseFloat(items[index-1].lat), parseFloat(items[index-1].lng),
+                        parseFloat(c.lat), parseFloat(c.lng)
+                    );
+                    infoDistancia = `<span class="route-distance">(${distancia.toFixed(1)} km desde anterior)</span>`;
+                }
+                
+                div.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <div style="font-weight: bold; font-size: 1.1em;">${index + 1}. ${c.negocio}</div>
+                            <div style="font-size: 0.9em; color: #666;">${c.direccion || 'Sin dirección'}</div>
+                            <div style="margin-top: 5px;">
+                                <span class="tag-dept">${c.departamento}</span>
+                                ${infoDistancia}
+                            </div>
+                            <div style="margin-top: 5px; font-size: 0.8em;">
+                                ${c.contactoWhatsApp ? '<span style="color:#25D366; margin-right:10px;">💚 WhatsApp</span>' : ''}
+                                ${c.contactoLlamada ? '<span style="color:#4285F4; margin-right:10px;">📞 Llamada</span>' : ''}
+                                ${c.contactoOtro ? '<span style="color:#757575;">🔘 Otro</span>' : ''}
+                            </div>
                         </div>
-                        <div style="margin-top:10px; display:flex; justify-content:space-between;">
-                            <button class="btn-secondary" style="padding:8px 12px; border:none; border-radius:4px; color:white; font-size:14px;" onclick="toggleRuta(${c.id}); renderRuta();">Descartar</button>
-                            <button class="btn-success" style="padding:8px 12px; border:none; border-radius:4px; color:white; font-size:14px; font-weight:bold;" onclick="gestionar(${c.id})">✅ Gestionar Visita</button>
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <button class="btn-icon btn-danger" onclick="toggleRuta(${c.id}); renderRuta();" style="font-size:12px;">✕</button>
+                            ${c.lat && c.lat !== "MANUAL" ? 
+                                `<button class="btn-icon" style="background:#00bcd4; font-size:12px;" onclick="window.open('https://www.google.com/maps/search/?api=1&query=${c.lat},${c.lng}','_blank')">🗺️</button>` : 
+                                ''
+                            }
                         </div>
-                    `;
-                    con.appendChild(div);
-                });
+                    </div>
+                    <div style="margin-top:10px; display:flex; justify-content:space-between;">
+                        <button class="btn-secondary" style="padding:8px 12px; border:none; border-radius:4px; color:white; font-size:14px;" onclick="toggleRuta(${c.id}); renderRuta();">Descartar</button>
+                        <button class="btn-success" style="padding:8px 12px; border:none; border-radius:4px; color:white; font-size:14px; font-weight:bold;" onclick="gestionar(${c.id})">✅ Gestionar Visita</button>
+                    </div>
+                `;
+                con.appendChild(div);
             });
         }
         
         function abrirMapaRuta() {
             const items = db.filter(c => ruta.includes(c.id) && c.lat && c.lat !== "MANUAL");
             if(items.length===0) return alert("Agrega clientes con GPS a la ruta primero.");
+            
             let url = "https://www.google.com/maps/dir/";
+            
+            // Si hay ubicación actual, empezar desde ahí
+            if(ubicacionActual) {
+                url += `${ubicacionActual.lat},${ubicacionActual.lon}/`;
+            }
+            
+            // Agregar todos los clientes de la ruta
             items.forEach((c, i) => {
-                if(i > 0) url += '/';
+                if(i > 0 || ubicacionActual) url += '/';
                 url += `${c.lat},${c.lng}`;
             });
+            
             window.open(url, '_blank');
         }
 
@@ -722,11 +926,11 @@
         }
         
         function guardarDB() { 
-            localStorage.setItem('db_clientes_v8', JSON.stringify(db)); 
-            localStorage.setItem('db_ruta_v8', JSON.stringify(ruta)); 
+            localStorage.setItem('db_clientes_v9', JSON.stringify(db)); 
+            localStorage.setItem('db_ruta_v9', JSON.stringify(ruta)); 
         }
 
-        // --- REPORTES ---
+        // --- REPORTES CON EXPORTACIÓN CSV ---
         function reporteDiario() {
             const hoy = new Date().toISOString().split('T')[0];
             filtrosReporteActual = { tipo: 'diario', fecha: hoy, depto: null };
@@ -796,14 +1000,14 @@
                 agrupados[depto].forEach(c => {
                     // Formatear opciones de contacto
                     const opcionesContacto = [];
-                    if(c.contactoWhatsApp) opcionesContacto.push('<span style="color:#25D366">💚 WhatsApp</span>');
-                    if(c.contactoLlamada) opcionesContacto.push('<span style="color:#4285F4">📞 Llamada</span>');
-                    if(c.contactoOtro) opcionesContacto.push('<span style="color:#757575">🔘 Otro</span>');
+                    if(c.contactoWhatsApp) opcionesContacto.push('WhatsApp');
+                    if(c.contactoLlamada) opcionesContacto.push('Llamada');
+                    if(c.contactoOtro) opcionesContacto.push('Otro');
                     
                     const opcionesCita = [];
-                    if(c.citaWhatsApp) opcionesCita.push('<span style="color:#25D366">💚 WhatsApp</span>');
-                    if(c.citaLlamada) opcionesCita.push('<span style="color:#4285F4">📞 Llamada</span>');
-                    if(c.citaOtro) opcionesCita.push('<span style="color:#757575">🔘 Otro</span>');
+                    if(c.citaWhatsApp) opcionesCita.push('WhatsApp');
+                    if(c.citaLlamada) opcionesCita.push('Llamada');
+                    if(c.citaOtro) opcionesCita.push('Otro');
                     
                     tbody.innerHTML += `
                         <tr>
@@ -901,6 +1105,102 @@
                 default:
                     reporteTotal();
             }
+        }
+        
+        // --- EXPORTACIÓN A CSV ---
+        function exportarCSV() {
+            // Obtener los datos filtrados según el reporte actual
+            let datos = [...db];
+            
+            // Aplicar los mismos filtros que el reporte actual
+            if(filtrosReporteActual.fecha) {
+                datos = datos.filter(c => c.fecha === filtrosReporteActual.fecha);
+            }
+            if(filtrosReporteActual.depto) {
+                datos = datos.filter(c => c.departamento === filtrosReporteActual.depto);
+            }
+            
+            if(datos.length === 0) {
+                return alert("No hay datos para exportar.");
+            }
+            
+            // Ordenar los datos igual que en el reporte
+            datos.sort((a,b) => {
+                if(a.departamento > b.departamento) return 1;
+                if(a.departamento < b.departamento) return -1;
+                if(a.negocio > b.negocio) return 1;
+                if(a.negocio < b.negocio) return -1;
+                return 0;
+            });
+            
+            // Crear encabezados CSV
+            const headers = [
+                'ID',
+                'Negocio',
+                'Departamento',
+                'Dirección',
+                'Encargado',
+                'Teléfono',
+                'Contacto WhatsApp',
+                'Contacto Llamada',
+                'Contacto Otro',
+                'Mensaje WhatsApp',
+                'Última Visita',
+                'Próxima Cita',
+                'Recordatorio WhatsApp',
+                'Recordatorio Llamada',
+                'Recordatorio Otro',
+                'Latitud',
+                'Longitud'
+            ];
+            
+            // Crear filas de datos
+            const rows = datos.map(c => {
+                return [
+                    c.id,
+                    `"${c.negocio.replace(/"/g, '""')}"`,
+                    `"${c.departamento}"`,
+                    `"${(c.direccion || '').replace(/"/g, '""')}"`,
+                    `"${(c.encargado || '').replace(/"/g, '""')}"`,
+                    c.telefono || '',
+                    c.contactoWhatsApp ? 'SI' : 'NO',
+                    c.contactoLlamada ? 'SI' : 'NO',
+                    c.contactoOtro ? 'SI' : 'NO',
+                    `"${(c.mensajeWhatsApp || '').replace(/"/g, '""')}"`,
+                    c.fecha || '',
+                    c.cita ? c.cita.replace('T', ' ') : '',
+                    c.citaWhatsApp ? 'SI' : 'NO',
+                    c.citaLlamada ? 'SI' : 'NO',
+                    c.citaOtro ? 'SI' : 'NO',
+                    c.lat || '',
+                    c.lng || ''
+                ].join(',');
+            });
+            
+            // Combinar encabezados y filas
+            const csvContent = [headers.join(','), ...rows].join('\n');
+            
+            // Crear y descargar archivo
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            // Generar nombre de archivo basado en el tipo de reporte
+            let filename = 'reporte_clientes';
+            if(filtrosReporteActual.tipo === 'diario') {
+                filename = `visitas_${new Date().toISOString().split('T')[0]}`;
+            } else if(filtrosReporteActual.tipo === 'custom' && filtrosReporteActual.depto) {
+                filename = `clientes_${filtrosReporteActual.depto.replace(/\s+/g, '_')}`;
+            }
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `${filename}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert(`✅ Se exportaron ${datos.length} registros a CSV.`);
         }
         
         function agendarCal() {
