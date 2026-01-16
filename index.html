@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ruta Comercial GT v7</title>
+    <title>Ruta Comercial GT v8</title>
     <style>
         /* ESTILOS BASE */
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f2f4f8; margin: 0; padding: 0; padding-bottom: 80px; }
@@ -51,6 +51,17 @@
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background: #f5f5f5; font-weight: bold; color: #333; }
         .hidden { display: none !important; }
+
+        /* Checkboxes de contacto */
+        .contact-options { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .contact-option { display: flex; align-items: center; gap: 5px; }
+        .contact-option input[type="checkbox"] { width: 20px; height: 20px; }
+        .contact-label { font-size: 0.85em; color: #333; }
+
+        /* Colores para las opciones de contacto */
+        .whatsapp-option { color: #25D366; }
+        .call-option { color: #4285F4; }
+        .other-option { color: #757575; }
 
         @media print {
             .no-print, .nav-bar, header { display: none !important; }
@@ -114,11 +125,48 @@
                 <label>Encargado</label>
                 <input type="text" id="encargado">
 
-                <label>Teléfono</label>
-                <input type="tel" id="telefono">
+                <label>Teléfono * (8 dígitos)</label>
+                <input type="tel" id="telefono" maxlength="8" pattern="[0-9]{8}" placeholder="12345678" 
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,8)">
+                
+                <label>Opciones de Contacto</label>
+                <div class="contact-options">
+                    <div class="contact-option whatsapp-option">
+                        <input type="checkbox" id="contactoWhatsApp" value="whatsapp">
+                        <label class="contact-label" for="contactoWhatsApp">WhatsApp</label>
+                    </div>
+                    <div class="contact-option call-option">
+                        <input type="checkbox" id="contactoLlamada" value="llamada">
+                        <label class="contact-label" for="contactoLlamada">Llamada</label>
+                    </div>
+                    <div class="contact-option other-option">
+                        <input type="checkbox" id="contactoOtro" value="otro">
+                        <label class="contact-label" for="contactoOtro">Otro</label>
+                    </div>
+                </div>
 
+                <label>Mensaje para WhatsApp</label>
+                <input type="text" id="mensajeWhatsApp" placeholder="Mensaje personalizado (opcional)">
+                
                 <label>Próxima Cita / Recordatorio</label>
                 <input type="datetime-local" id="cita">
+                
+                <label>Opciones de Contacto para la Cita</label>
+                <div class="contact-options">
+                    <div class="contact-option whatsapp-option">
+                        <input type="checkbox" id="citaWhatsApp" value="whatsapp">
+                        <label class="contact-label" for="citaWhatsApp">Recordatorio por WhatsApp</label>
+                    </div>
+                    <div class="contact-option call-option">
+                        <input type="checkbox" id="citaLlamada" value="llamada">
+                        <label class="contact-label" for="citaLlamada">Recordatorio por Llamada</label>
+                    </div>
+                    <div class="contact-option other-option">
+                        <input type="checkbox" id="citaOtro" value="otro">
+                        <label class="contact-label" for="citaOtro">Otro método</label>
+                    </div>
+                </div>
+
                 <button class="btn btn-warning" onclick="agendarCal()">📅 Agendar en Calendar</button>
 
                 <div style="display:flex; gap:10px; margin-top:15px;">
@@ -170,6 +218,16 @@
                     </select>
                 </div>
                 <button class="btn btn-primary" onclick="reporteCustom()">🔍 Buscar</button>
+                
+                <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+                    <label>Eliminar Registros del Reporte Actual:</label>
+                    <button class="btn btn-danger" onclick="eliminarTodosDelReporte()" style="margin-top: 10px;">
+                        🗑️ ELIMINAR TODOS LOS REGISTROS VISIBLES
+                    </button>
+                    <p style="font-size: 0.8em; color: #d32f2f; margin-top: 5px;">
+                        ⚠️ Esta acción eliminará permanentemente todos los clientes mostrados en la tabla.
+                    </p>
+                </div>
             </div>
 
             <div class="card" id="areaPrint">
@@ -184,7 +242,9 @@
                             <tr style="background:#eee;">
                                 <th>Cliente</th>
                                 <th>Ubicación / Contacto</th>
+                                <th>Preferencias</th>
                                 <th>Gestión</th>
+                                <th class="no-print">Acciones</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -214,14 +274,18 @@
             "Santa Rosa", "Sololá", "Suchitepéquez", "Totonicapán", "Zacapa"
         ];
 
-        let db = JSON.parse(localStorage.getItem('db_clientes_v7')) || [];
-        let ruta = JSON.parse(localStorage.getItem('db_ruta_v7')) || [];
+        let db = JSON.parse(localStorage.getItem('db_clientes_v8')) || [];
+        let ruta = JSON.parse(localStorage.getItem('db_ruta_v8')) || [];
+        let filtrosReporteActual = { tipo: '', fecha: null, depto: null };
 
         // --- INICIALIZACIÓN ---
         document.addEventListener("DOMContentLoaded", () => {
             cargarDepartamentosEnSelects();
             renderDashboard();
             actualizarBadge();
+            
+            // Configurar fecha actual en el filtro de reportes
+            document.getElementById('repFecha').value = new Date().toISOString().split('T')[0];
         });
 
         // FUNCIÓN PARA CARGAR DEPARTAMENTOS EN TODOS LOS SELECT
@@ -275,7 +339,6 @@
             if(id=='view-form') document.getElementById('btn-add').classList.add('active');
             if(id=='view-reportes') {
                 document.getElementById('btn-rep').classList.add('active');
-                document.getElementById('repFecha').value = new Date().toISOString().split('T')[0];
             }
         }
         
@@ -328,6 +391,10 @@
                         <span class="tag-dept">${c.departamento}</span>
                         <div style="font-weight:bold; font-size:1.1em; color:#333; margin-top:2px;">${c.negocio}</div>
                         <div style="font-size:0.9em; color:#666;">${c.encargado}</div>
+                        <div style="font-size:0.8em; color:#666;">📞 ${c.telefono || 'Sin teléfono'}</div>
+                        ${c.contactoWhatsApp ? '<span style="font-size:0.7em; color:#25D366; margin-right:5px;">💚 WhatsApp</span>' : ''}
+                        ${c.contactoLlamada ? '<span style="font-size:0.7em; color:#4285F4; margin-right:5px;">📞 Llamada</span>' : ''}
+                        ${c.contactoOtro ? '<span style="font-size:0.7em; color:#757575;">🔘 Otro</span>' : ''}
                         ${visitado ? `<span class="tag-visited">✅ GESTIONADO HOY</span>` : `<span style="font-size:0.8em; color:#999;">📅 Última gestión: ${c.fecha||'N/A'}</span>`}
                     </div>
                     <div style="display:flex; flex-direction:column; gap:8px; justify-content:center; margin-left:5px;">
@@ -346,7 +413,7 @@
             const i = ruta.indexOf(id);
             if(i < 0) ruta.push(id); 
             else ruta.splice(i,1);
-            localStorage.setItem('db_ruta_v7', JSON.stringify(ruta));
+            localStorage.setItem('db_ruta_v8', JSON.stringify(ruta));
             renderDashboard();
             actualizarBadge();
         }
@@ -364,7 +431,7 @@
         function limpiarRuta() {
             if(confirm("¿Limpiar toda la ruta pendiente?")) { 
                 ruta=[]; 
-                localStorage.setItem('db_ruta_v7', JSON.stringify(ruta)); 
+                localStorage.setItem('db_ruta_v8', JSON.stringify(ruta)); 
                 renderDashboard(); 
                 renderRuta(); 
                 actualizarBadge(); 
@@ -407,6 +474,11 @@
                     div.innerHTML = `
                         <b>${c.negocio}</b><br>
                         <small>${c.direccion}</small>
+                        <div style="margin-top:5px; font-size:0.8em;">
+                            ${c.contactoWhatsApp ? '<span style="color:#25D366; margin-right:10px;">💚 WhatsApp</span>' : ''}
+                            ${c.contactoLlamada ? '<span style="color:#4285F4; margin-right:10px;">📞 Llamada</span>' : ''}
+                            ${c.contactoOtro ? '<span style="color:#757575;">🔘 Otro</span>' : ''}
+                        </div>
                         <div style="margin-top:10px; display:flex; justify-content:space-between;">
                             <button class="btn-secondary" style="padding:8px 12px; border:none; border-radius:4px; color:white; font-size:14px;" onclick="toggleRuta(${c.id}); renderRuta();">Descartar</button>
                             <button class="btn-success" style="padding:8px 12px; border:none; border-radius:4px; color:white; font-size:14px; font-weight:bold;" onclick="gestionar(${c.id})">✅ Gestionar Visita</button>
@@ -464,6 +536,18 @@
             document.getElementById('cita').value = c.cita || '';
             document.getElementById('lat').value = c.lat || '';
             document.getElementById('lng').value = c.lng || '';
+            document.getElementById('mensajeWhatsApp').value = c.mensajeWhatsApp || '';
+            
+            // Cargar opciones de contacto
+            document.getElementById('contactoWhatsApp').checked = c.contactoWhatsApp || false;
+            document.getElementById('contactoLlamada').checked = c.contactoLlamada || false;
+            document.getElementById('contactoOtro').checked = c.contactoOtro || false;
+            
+            // Cargar opciones de contacto para cita
+            document.getElementById('citaWhatsApp').checked = c.citaWhatsApp || false;
+            document.getElementById('citaLlamada').checked = c.citaLlamada || false;
+            document.getElementById('citaOtro').checked = c.citaOtro || false;
+            
             document.getElementById('gpsTxt').textContent = c.lat ? "✅ GPS Guardado" : "Sin GPS";
         }
         
@@ -477,11 +561,22 @@
             document.getElementById('cita').value = '';
             document.getElementById('lat').value = '';
             document.getElementById('lng').value = '';
+            document.getElementById('mensajeWhatsApp').value = '';
             document.getElementById('flagRuta').value = '0';
             document.getElementById('gpsTxt').textContent = "Esperando...";
             document.getElementById('boxManual').classList.add('hidden');
             document.getElementById('linkMan').value = '';
             document.getElementById('foto').value = '';
+            
+            // Limpiar checkboxes de contacto
+            document.getElementById('contactoWhatsApp').checked = false;
+            document.getElementById('contactoLlamada').checked = false;
+            document.getElementById('contactoOtro').checked = false;
+            
+            // Limpiar checkboxes de contacto para cita
+            document.getElementById('citaWhatsApp').checked = false;
+            document.getElementById('citaLlamada').checked = false;
+            document.getElementById('citaOtro').checked = false;
         }
         
         function borrar(id) {
@@ -490,12 +585,26 @@
                 ruta = ruta.filter(x => x !== id);
                 guardarDB(); 
                 renderDashboard();
+                // Si estamos en reportes, regenerar el reporte
+                if (!document.getElementById('view-reportes').classList.contains('hidden')) {
+                    regenerarReporteActual();
+                }
             }
         }
         
         function irGPS() {
+            const telefono = document.getElementById('telefono').value.trim();
             if(!document.getElementById('negocio').value.trim()) {
                 return alert("El nombre del negocio es obligatorio.");
+            }
+            if(!telefono) {
+                return alert("El número de teléfono es obligatorio.");
+            }
+            if(telefono.length !== 8) {
+                return alert("El número de teléfono debe tener 8 dígitos.");
+            }
+            if(!/^\d+$/.test(telefono)) {
+                return alert("El número de teléfono solo debe contener dígitos.");
             }
             mostrar('view-gps');
         }
@@ -554,14 +663,23 @@
         function guardar() {
             const id = document.getElementById('idCliente').value;
             const nuevoId = id ? parseInt(id) : Date.now();
+            const telefono = document.getElementById('telefono').value.trim();
             
-            // Validaciones básicas
+            // Validaciones
             if(!document.getElementById('negocio').value.trim()) {
                 return alert("El nombre del negocio es obligatorio.");
             }
-            
             if(!document.getElementById('departamento').value) {
                 return alert("Debe seleccionar un departamento.");
+            }
+            if(!telefono) {
+                return alert("El número de teléfono es obligatorio.");
+            }
+            if(telefono.length !== 8) {
+                return alert("El número de teléfono debe tener 8 dígitos.");
+            }
+            if(!/^\d+$/.test(telefono)) {
+                return alert("El número de teléfono solo debe contener dígitos.");
             }
             
             const data = {
@@ -570,10 +688,17 @@
                 departamento: document.getElementById('departamento').value,
                 direccion: document.getElementById('direccion').value.trim(),
                 encargado: document.getElementById('encargado').value.trim(),
-                telefono: document.getElementById('telefono').value.trim(),
+                telefono: telefono,
                 cita: document.getElementById('cita').value,
                 lat: document.getElementById('lat').value,
                 lng: document.getElementById('lng').value,
+                mensajeWhatsApp: document.getElementById('mensajeWhatsApp').value.trim(),
+                contactoWhatsApp: document.getElementById('contactoWhatsApp').checked,
+                contactoLlamada: document.getElementById('contactoLlamada').checked,
+                contactoOtro: document.getElementById('contactoOtro').checked,
+                citaWhatsApp: document.getElementById('citaWhatsApp').checked,
+                citaLlamada: document.getElementById('citaLlamada').checked,
+                citaOtro: document.getElementById('citaOtro').checked,
                 fecha: new Date().toISOString().split('T')[0]
             };
 
@@ -597,23 +722,26 @@
         }
         
         function guardarDB() { 
-            localStorage.setItem('db_clientes_v7', JSON.stringify(db)); 
-            localStorage.setItem('db_ruta_v7', JSON.stringify(ruta)); 
+            localStorage.setItem('db_clientes_v8', JSON.stringify(db)); 
+            localStorage.setItem('db_ruta_v8', JSON.stringify(ruta)); 
         }
 
         // --- REPORTES ---
         function reporteDiario() {
             const hoy = new Date().toISOString().split('T')[0];
+            filtrosReporteActual = { tipo: 'diario', fecha: hoy, depto: null };
             generarTablaReporte(hoy, null, "REPORTE DE VISITAS DEL DÍA", `Fecha: ${hoy}`);
         }
         
         function reporteTotal() {
+            filtrosReporteActual = { tipo: 'total', fecha: null, depto: null };
             generarTablaReporte(null, null, "CARTERA TOTAL DE CLIENTES", "Listado completo ordenado por departamento");
         }
         
         function reporteCustom() {
             const f = document.getElementById('repFecha').value;
             const d = document.getElementById('filtroDeptReporte').value;
+            filtrosReporteActual = { tipo: 'custom', fecha: f, depto: d };
             generarTablaReporte(f, d, "REPORTE PERSONALIZADO", `Filtros: ${f || 'Cualquier fecha'} - ${d || 'Todos los departamentos'}`);
         }
 
@@ -639,7 +767,7 @@
             });
 
             if(datos.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px;">No se encontraron registros.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">No se encontraron registros.</td></tr>';
                 document.getElementById('resumenReporte').textContent = "Total: 0 registros";
                 return;
             }
@@ -658,7 +786,7 @@
                 // Agregar fila de encabezado del departamento
                 tbody.innerHTML += `
                     <tr style="background:#e3f2fd;">
-                        <td colspan="3" style="font-weight:bold; color:#1565c0; text-transform:uppercase;">
+                        <td colspan="5" style="font-weight:bold; color:#1565c0; text-transform:uppercase;">
                             📍 ${depto} (${agrupados[depto].length} clientes)
                         </td>
                     </tr>
@@ -666,19 +794,40 @@
                 
                 // Agregar cada cliente del departamento
                 agrupados[depto].forEach(c => {
+                    // Formatear opciones de contacto
+                    const opcionesContacto = [];
+                    if(c.contactoWhatsApp) opcionesContacto.push('<span style="color:#25D366">💚 WhatsApp</span>');
+                    if(c.contactoLlamada) opcionesContacto.push('<span style="color:#4285F4">📞 Llamada</span>');
+                    if(c.contactoOtro) opcionesContacto.push('<span style="color:#757575">🔘 Otro</span>');
+                    
+                    const opcionesCita = [];
+                    if(c.citaWhatsApp) opcionesCita.push('<span style="color:#25D366">💚 WhatsApp</span>');
+                    if(c.citaLlamada) opcionesCita.push('<span style="color:#4285F4">📞 Llamada</span>');
+                    if(c.citaOtro) opcionesCita.push('<span style="color:#757575">🔘 Otro</span>');
+                    
                     tbody.innerHTML += `
                         <tr>
                             <td>
                                 <b>${c.negocio}</b><br>
+                                <small>👤 ${c.encargado || 'Sin encargado'}</small><br>
                                 <small>ID: ${c.id}</small>
                             </td>
                             <td>
                                 ${c.direccion || 'Sin dirección'}<br>
-                                <small>👤 ${c.encargado || 'Sin encargado'} | 📞 ${c.telefono || 'Sin teléfono'}</small>
+                                <small>📞 ${c.telefono || 'Sin teléfono'}</small>
+                            </td>
+                            <td>
+                                <small><b>Contacto:</b> ${opcionesContacto.length > 0 ? opcionesContacto.join(' • ') : 'No especificado'}</small><br>
+                                <small><b>Recordatorio:</b> ${opcionesCita.length > 0 ? opcionesCita.join(' • ') : 'No especificado'}</small>
+                                ${c.mensajeWhatsApp ? `<br><small><b>Mensaje:</b> ${c.mensajeWhatsApp}</small>` : ''}
                             </td>
                             <td>
                                 📅 ${c.fecha || 'Sin fecha'}<br>
-                                <small>${c.cita ? '⏰ Cita: ' + c.cita.replace('T', ' ') : 'Sin cita programada'}</small>
+                                <small>${c.cita ? '⏰ Cita: ' + c.cita.replace('T', ' ') : 'Sin cita'}</small>
+                            </td>
+                            <td class="no-print">
+                                <button class="btn-icon btn-danger" onclick="eliminarDesdeReporte(${c.id})">🗑️</button>
+                                <button class="btn-icon btn-warning" onclick="editar(${c.id}); mostrar('view-form')">✏️</button>
                             </td>
                         </tr>
                     `;
@@ -687,6 +836,71 @@
             
             document.getElementById('resumenReporte').textContent = 
                 `Total: ${datos.length} cliente(s) | Departamentos: ${Object.keys(agrupados).length}`;
+        }
+        
+        function eliminarDesdeReporte(id) {
+            if(confirm("¿Eliminar este cliente permanentemente?")) {
+                db = db.filter(x => x.id !== id);
+                ruta = ruta.filter(x => x !== id);
+                guardarDB();
+                renderDashboard();
+                regenerarReporteActual();
+            }
+        }
+        
+        function eliminarTodosDelReporte() {
+            if(db.length === 0) {
+                return alert("No hay clientes para eliminar.");
+            }
+            
+            const confirmacion = prompt(`¿Está seguro de eliminar TODOS los clientes? Esta acción no se puede deshacer.\n\nEscriba "ELIMINAR" para confirmar:`);
+            
+            if(confirmacion === "ELIMINAR") {
+                // Determinar qué clientes están en el reporte actual
+                let clientesAEliminar = [...db];
+                
+                // Aplicar filtros actuales
+                if(filtrosReporteActual.fecha) {
+                    clientesAEliminar = clientesAEliminar.filter(c => c.fecha === filtrosReporteActual.fecha);
+                }
+                if(filtrosReporteActual.depto) {
+                    clientesAEliminar = clientesAEliminar.filter(c => c.departamento === filtrosReporteActual.depto);
+                }
+                
+                if(clientesAEliminar.length === 0) {
+                    return alert("No hay clientes que coincidan con los filtros actuales.");
+                }
+                
+                if(confirm(`⚠️ ADVERTENCIA FINAL\n\nSe eliminarán ${clientesAEliminar.length} cliente(s) permanentemente.\n\n¿Continuar?`)) {
+                    // Eliminar los clientes del reporte actual
+                    const idsAEliminar = clientesAEliminar.map(c => c.id);
+                    db = db.filter(c => !idsAEliminar.includes(c.id));
+                    ruta = ruta.filter(id => !idsAEliminar.includes(id));
+                    
+                    guardarDB();
+                    alert(`✅ Se eliminaron ${clientesAEliminar.length} cliente(s) exitosamente.`);
+                    renderDashboard();
+                    regenerarReporteActual();
+                }
+            } else {
+                alert("Eliminación cancelada.");
+            }
+        }
+        
+        function regenerarReporteActual() {
+            switch(filtrosReporteActual.tipo) {
+                case 'diario':
+                    reporteDiario();
+                    break;
+                case 'total':
+                    reporteTotal();
+                    break;
+                case 'custom':
+                    reporteCustom();
+                    break;
+                default:
+                    reporteTotal();
+            }
         }
         
         function agendarCal() {
