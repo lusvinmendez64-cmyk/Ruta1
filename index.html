@@ -8,70 +8,97 @@
         /* ESTILOS BASE */
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f2f4f8; margin: 0; padding: 0; padding-bottom: 80px; }
         
-        header { background-color: #0d47a1; color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        header { background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%); color: white; padding: 12px 15px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .header-content { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .header-info { flex: 1; }
+        .app-title { font-weight: bold; font-size: 1.1em; margin-bottom: 3px; }
+        .header-date { font-size: 0.8em; opacity: 0.9; }
+        .header-buttons { display: flex; align-items: center; gap: 10px; }
         
         .container { max-width: 800px; margin: 0 auto; padding: 10px; }
-        .card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 12px; border: 1px solid #e1e4e8; }
+        .card { background: white; padding: 18px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); margin-bottom: 15px; border: 1px solid #e8ecf1; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         
         h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; font-size: 1.1em; }
         label { font-weight: 600; font-size: 0.85em; color: #5f6368; display: block; margin-top: 12px; }
         
-        /* Inputs */
-        input, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; background-color: #fff; height: 45px; }
+        /* Inputs mejorados */
+        input, select { width: 100%; padding: 12px; margin-top: 5px; border: 1.5px solid #d1d9e6; border-radius: 8px; font-size: 16px; background-color: #fff; height: 45px; transition: border-color 0.3s; }
+        input:focus, select:focus { outline: none; border-color: #1976d2; box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1); }
         
-        /* BOTONES */
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: bold; margin-top: 15px; color: white; transition: 0.2s; }
-        .btn:active { transform: scale(0.98); }
-        .btn-primary { background-color: #1976d2; }
-        .btn-success { background-color: #2e7d32; }
-        .btn-secondary { background-color: #757575; }
-        .btn-warning { background-color: #fbc02d; color: #333; }
-        .btn-danger { background-color: #d32f2f; }
-        .btn-dark { background-color: #263238; }
-        .btn-info { background-color: #0288d1; }
+        /* BOTONES mejorados */
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; letter-spacing: 0.3px; margin-top: 15px; color: white; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary { background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%); }
+        .btn-success { background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%); }
+        .btn-secondary { background: linear-gradient(135deg, #757575 0%, #9e9e9e 100%); }
+        .btn-warning { background: linear-gradient(135deg, #fbc02d 0%, #ffeb3b 100%); color: #333; }
+        .btn-danger { background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%); }
+        .btn-dark { background: linear-gradient(135deg, #263238 0%, #455a64 100%); }
+        .btn-info { background: linear-gradient(135deg, #0288d1 0%, #03a9f4 100%); }
 
         /* Botones Pequeños */
-        .btn-icon { padding: 6px 10px; border-radius: 4px; border: none; cursor: pointer; color: white; margin-left: 2px; font-size: 14px; }
+        .btn-icon { padding: 6px 10px; border-radius: 6px; border: none; cursor: pointer; color: white; margin-left: 2px; font-size: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
         
         /* Checkbox */
         .check-ruta { width: 24px; height: 24px; margin-right: 12px; vertical-align: middle; accent-color: #1976d2; }
 
-        /* MENÚ INFERIOR */
+        /* MENÚ INFERIOR mejorado */
         .nav-bar { display: flex; justify-content: space-around; background: white; padding: 8px 0; position: fixed; bottom: 0; width: 100%; border-top: 1px solid #ddd; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
-        .nav-btn { background: none; border: none; color: #5f6368; font-size: 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; width: 25%; }
+        .nav-btn { background: none; border: none; color: #5f6368; font-size: 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; width: 20%; position: relative; transition: color 0.3s; }
         .nav-btn.active { color: #1565c0; font-weight: bold; }
         .nav-icon { font-size: 22px; margin-bottom: 2px; }
-        .badge { background: #d32f2f; color: white; border-radius: 50%; padding: 3px 6px; font-size: 10px; position: absolute; top: 2px; right: 20%; font-weight: bold; }
+        .badge { background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%); color: white; border-radius: 50%; padding: 3px 6px; font-size: 10px; position: absolute; top: -2px; right: 15%; font-weight: bold; min-width: 18px; text-align: center; }
+        .notification-dot { width: 8px; height: 8px; background: #ff4757; border-radius: 50%; position: absolute; top: 2px; right: 20%; }
 
-        /* ETIQUETAS */
-        .tag-visited { background: #e8f5e9; color: #2e7d32; padding: 4px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold; border: 1px solid #c8e6c9; display: inline-block; margin-top: 5px; }
-        .tag-dept { background: #e3f2fd; color: #1565c0; padding: 3px 6px; border-radius: 4px; font-size: 0.75em; font-weight: bold; text-transform: uppercase; }
+        /* ETIQUETAS mejoradas */
+        .tag-visited { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); color: #2e7d32; padding: 4px 10px; border-radius: 20px; font-size: 0.75em; font-weight: bold; border: 1px solid #a5d6a7; display: inline-block; margin-top: 5px; }
+        .tag-dept { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); color: #1565c0; padding: 4px 10px; border-radius: 20px; font-size: 0.75em; font-weight: bold; text-transform: uppercase; border: 1px solid #90caf9; }
 
-        /* TABLA REPORTES */
-        table { width: 100%; border-collapse: collapse; font-size: 0.8em; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background: #f5f5f5; font-weight: bold; color: #333; }
+        /* TABLA REPORTES mejorada */
+        table { width: 100%; border-collapse: collapse; font-size: 0.8em; margin-top: 10px; border-radius: 8px; overflow: hidden; }
+        th, td { border: 1px solid #e0e0e0; padding: 10px; text-align: left; }
+        th { background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%); font-weight: bold; color: #333; }
         .hidden { display: none !important; }
 
-        /* Checkboxes de contacto */
-        .contact-options { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-        .contact-option { display: flex; align-items: center; gap: 5px; }
-        .contact-option input[type="checkbox"] { width: 20px; height: 20px; }
-        .contact-label { font-size: 0.85em; color: #333; }
+        /* Checkboxes de contacto mejorados */
+        .contact-options { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px; }
+        .contact-option { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; background: #f8f9fa; }
+        .contact-option input[type="checkbox"] { width: 20px; height: 20px; accent-color: #1976d2; }
+        .contact-label { font-size: 0.85em; color: #333; font-weight: 500; }
 
         /* Colores para las opciones de contacto */
-        .whatsapp-option { color: #25D366; }
-        .call-option { color: #4285F4; }
-        .other-option { color: #757575; }
+        .whatsapp-option { border-left: 4px solid #25D366; }
+        .call-option { border-left: 4px solid #4285F4; }
+        .other-option { border-left: 4px solid #757575; }
 
-        /* Buscador */
+        /* Buscador mejorado */
         .search-container { position: relative; margin-top: 10px; }
-        .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #666; }
-        .search-input { padding-left: 35px !important; }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666; font-size: 1.1em; }
+        .search-input { padding-left: 40px !important; background: #f8f9fa; border: 1px solid #e0e0e0; }
 
-        /* Indicador de optimización */
-        .route-optimized { background: #e8f5e9 !important; border-left: 5px solid #2e7d32 !important; }
-        .route-distance { font-size: 0.8em; color: #666; margin-left: 5px; }
+        /* Indicador de optimización mejorado */
+        .route-optimized { background: linear-gradient(135deg, #e8f5e9 0%, #d7eed9 100%) !important; border-left: 5px solid #2e7d32 !important; }
+        .route-distance { font-size: 0.8em; color: #666; margin-left: 5px; font-weight: 500; }
+
+        /* Calendario */
+        .calendar-day { background: #e3f2fd; padding: 5px; border-radius: 8px; margin-bottom: 10px; }
+        .calendar-appointment { background: white; padding: 10px; border-radius: 6px; margin: 5px 0; border-left: 4px solid #1976d2; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .calendar-appointment.urgent { border-left-color: #f44336; }
+        .calendar-appointment.upcoming { border-left-color: #ff9800; }
+
+        /* Estadísticas */
+        .stats-container { display: flex; gap: 10px; margin-bottom: 15px; }
+        .stat-card { flex: 1; background: white; padding: 12px; border-radius: 8px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .stat-number { font-size: 1.5em; font-weight: bold; color: #1976d2; }
+        .stat-label { font-size: 0.8em; color: #666; }
+
+        /* Modal de notificación */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 12px; max-width: 400px; width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .modal-header { font-weight: bold; font-size: 1.2em; margin-bottom: 10px; color: #333; }
+        .modal-body { margin-bottom: 15px; }
+        .modal-footer { text-align: right; }
 
         @media print {
             .no-print, .nav-bar, header { display: none !important; }
@@ -83,13 +110,53 @@
 <body>
 
     <header class="no-print">
-        <span style="font-weight:bold;">Ruta Comercial GT</span>
-        <button class="btn-icon btn-warning" onclick="limpiarRuta()" style="font-size:11px; padding:5px; color:black; font-weight:bold;">Limpiar Ruta</button>
+        <div class="header-content">
+            <div class="header-info">
+                <div class="app-title">Ruta Comercial GT v9</div>
+                <div id="fecha-header" class="header-date">
+                    <!-- Fecha se actualizará con JavaScript -->
+                </div>
+            </div>
+            <div class="header-buttons">
+                <span id="notificacion-badge" class="badge hidden">0</span>
+                <button class="btn-icon btn-warning" onclick="limpiarRuta()" style="font-size:11px; padding:5px 8px; color:black; font-weight:bold;">Limpiar Ruta</button>
+            </div>
+        </div>
     </header>
+
+    <!-- Modal de Notificaciones -->
+    <div id="notificationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">🔔 Recordatorio de Cita</div>
+            <div class="modal-body" id="modalBody">
+                Tienes una cita próxima.
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="cerrarModal()">Cerrar</button>
+                <button class="btn btn-primary" onclick="verCalendario()">Ver Calendario</button>
+            </div>
+        </div>
+    </div>
 
     <div class="container">
 
+        <!-- Estadísticas Rápidas -->
         <div id="view-dashboard" class="view-section">
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-number" id="statTotal">0</div>
+                    <div class="stat-label">Total Clientes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="statHoy">0</div>
+                    <div class="stat-label">Visitados Hoy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="statCitas">0</div>
+                    <div class="stat-label">Citas Hoy</div>
+                </div>
+            </div>
+
             <button class="btn btn-primary" onclick="nuevoCliente()">+ AGREGAR CLIENTE NUEVO</button>
             
             <div class="card" style="margin-top:15px;">
@@ -111,7 +178,7 @@
         </div>
 
         <div id="view-ruta" class="view-section hidden">
-            <div class="card" style="background:#e3f2fd; border:1px solid #90caf9;">
+            <div class="card" style="background:linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border:1px solid #90caf9;">
                 <h3 style="color:#1565c0; border:none;">📍 Ruta del Día</h3>
                 <p id="txtRuta" style="font-size:0.9em; color:#555;">Selecciona clientes en el inicio para armar tu ruta.</p>
                 
@@ -222,6 +289,20 @@
             </div>
         </div>
 
+        <!-- NUEVA VISTA: CALENDARIO -->
+        <div id="view-calendar" class="view-section hidden">
+            <div class="card">
+                <h3>📅 Agenda de Citas</h3>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <input type="date" id="fechaCalendario" style="flex:1;" onchange="filtrarCitas()">
+                    <button class="btn btn-secondary" onclick="filtrarCitasHoy()">Hoy</button>
+                    <button class="btn btn-primary" onclick="filtrarCitasMes()">Este Mes</button>
+                </div>
+                <div id="listaCitas"></div>
+                <p id="msgSinCitas" style="text-align:center; color:#777; padding:20px; display:none;">No hay citas programadas para esta fecha.</p>
+            </div>
+        </div>
+
         <div id="view-reportes" class="view-section hidden">
             <div class="card no-print">
                 <h3>Generador de Reportes</h3>
@@ -289,6 +370,7 @@
     <div class="nav-bar no-print">
         <button class="nav-btn active" id="btn-home" onclick="mostrar('view-dashboard')"><span class="nav-icon">🏠</span>Inicio</button>
         <button class="nav-btn" id="btn-ruta" onclick="mostrar('view-ruta')"><span class="nav-icon">🚚</span>Ruta<span id="badge" class="badge hidden">0</span></button>
+        <button class="nav-btn" id="btn-cal" onclick="mostrar('view-calendar')"><span class="nav-icon">📅</span>Calendario<span id="badge-cal" class="badge hidden">0</span></button>
         <button class="nav-btn" id="btn-add" onclick="nuevoCliente()"><span class="nav-icon">➕</span>Crear</button>
         <button class="nav-btn" id="btn-rep" onclick="mostrar('view-reportes')"><span class="nav-icon">📊</span>Reportes</button>
     </div>
@@ -307,16 +389,274 @@
         let filtrosReporteActual = { tipo: '', fecha: null, depto: null };
         let rutaOptimizada = false;
         let ubicacionActual = null;
+        let notificacionInterval = null;
 
         // --- INICIALIZACIÓN ---
         document.addEventListener("DOMContentLoaded", () => {
             cargarDepartamentosEnSelects();
             renderDashboard();
             actualizarBadge();
+            actualizarFechaHeader();
+            actualizarEstadisticas();
+            actualizarBadgeCalendario();
             
             // Configurar fecha actual en el filtro de reportes
             document.getElementById('repFecha').value = new Date().toISOString().split('T')[0];
+            
+            // Iniciar verificación de recordatorios cada minuto
+            iniciarVerificacionRecordatorios();
+            
+            // Verificar recordatorios inmediatamente
+            verificarRecordatorios();
         });
+
+        // --- FUNCIONES DE FECHA Y HORA ---
+        function actualizarFechaHeader() {
+            const ahora = new Date();
+            const opciones = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            const fechaFormateada = ahora.toLocaleDateString('es-GT', opciones);
+            document.getElementById('fecha-header').textContent = fechaFormateada;
+            
+            // Actualizar cada minuto
+            setTimeout(actualizarFechaHeader, 60000);
+        }
+
+        function actualizarEstadisticas() {
+            const hoy = new Date().toISOString().split('T')[0];
+            
+            // Total clientes
+            document.getElementById('statTotal').textContent = db.length;
+            
+            // Visitados hoy
+            const visitadosHoy = db.filter(c => c.fecha === hoy).length;
+            document.getElementById('statHoy').textContent = visitadosHoy;
+            
+            // Citas hoy
+            const citasHoy = db.filter(c => {
+                if(!c.cita) return false;
+                return c.cita.startsWith(hoy);
+            }).length;
+            document.getElementById('statCitas').textContent = citasHoy;
+            
+            // Actualizar badge de notificaciones
+            const badgeNotif = document.getElementById('notificacion-badge');
+            if(citasHoy > 0) {
+                badgeNotif.textContent = citasHoy;
+                badgeNotif.classList.remove('hidden');
+            } else {
+                badgeNotif.classList.add('hidden');
+            }
+        }
+
+        function actualizarBadgeCalendario() {
+            const hoy = new Date().toISOString().split('T')[0];
+            const citasHoy = db.filter(c => {
+                if(!c.cita) return false;
+                return c.cita.startsWith(hoy);
+            }).length;
+            
+            const badgeCal = document.getElementById('badge-cal');
+            if(citasHoy > 0) {
+                badgeCal.textContent = citasHoy;
+                badgeCal.classList.remove('hidden');
+            } else {
+                badgeCal.classList.add('hidden');
+            }
+        }
+
+        // --- CALENDARIO Y RECORDATORIOS ---
+        function filtrarCitas() {
+            const fechaSeleccionada = document.getElementById('fechaCalendario').value;
+            mostrarCitas(fechaSeleccionada);
+        }
+
+        function filtrarCitasHoy() {
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById('fechaCalendario').value = hoy;
+            mostrarCitas(hoy);
+        }
+
+        function filtrarCitasMes() {
+            const hoy = new Date();
+            const primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString().split('T')[0];
+            const ultimoDia = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).toISOString().split('T')[0];
+            
+            // Mostrar todas las citas del mes
+            mostrarCitas(null, primerDia, ultimoDia);
+        }
+
+        function mostrarCitas(fechaEspecifica = null, fechaInicio = null, fechaFin = null) {
+            const listaCitas = document.getElementById('listaCitas');
+            const msgSinCitas = document.getElementById('msgSinCitas');
+            listaCitas.innerHTML = '';
+            
+            let citasFiltradas = db.filter(c => c.cita);
+            
+            if(fechaEspecifica) {
+                citasFiltradas = citasFiltradas.filter(c => c.cita.startsWith(fechaEspecifica));
+            } else if(fechaInicio && fechaFin) {
+                citasFiltradas = citasFiltradas.filter(c => {
+                    const fechaCita = c.cita.split('T')[0];
+                    return fechaCita >= fechaInicio && fechaCita <= fechaFin;
+                });
+            }
+            
+            // Ordenar por fecha
+            citasFiltradas.sort((a, b) => new Date(a.cita) - new Date(b.cita));
+            
+            if(citasFiltradas.length === 0) {
+                msgSinCitas.style.display = 'block';
+                if(fechaEspecifica) {
+                    msgSinCitas.textContent = `No hay citas programadas para ${fechaEspecifica}`;
+                } else if(fechaInicio && fechaFin) {
+                    msgSinCitas.textContent = `No hay citas programadas entre ${fechaInicio} y ${fechaFin}`;
+                } else {
+                    msgSinCitas.textContent = 'No hay citas programadas';
+                }
+                return;
+            }
+            
+            msgSinCitas.style.display = 'none';
+            
+            // Agrupar por día
+            const citasPorDia = {};
+            citasFiltradas.forEach(cita => {
+                const fecha = cita.cita.split('T')[0];
+                if(!citasPorDia[fecha]) {
+                    citasPorDia[fecha] = [];
+                }
+                citasPorDia[fecha].push(cita);
+            });
+            
+            // Mostrar citas agrupadas por día
+            Object.keys(citasPorDia).sort().forEach(fecha => {
+                const divDia = document.createElement('div');
+                divDia.className = 'calendar-day';
+                divDia.innerHTML = `<strong>${formatearFecha(fecha)}</strong>`;
+                listaCitas.appendChild(divDia);
+                
+                citasPorDia[fecha].forEach(cita => {
+                    const ahora = new Date();
+                    const fechaCita = new Date(cita.cita);
+                    const diferenciaHoras = (fechaCita - ahora) / (1000 * 60 * 60);
+                    
+                    let claseUrgencia = '';
+                    if(diferenciaHoras > 0 && diferenciaHoras <= 1) {
+                        claseUrgencia = 'urgent';
+                    } else if(diferenciaHoras > 1 && diferenciaHoras <= 24) {
+                        claseUrgencia = 'upcoming';
+                    }
+                    
+                    const divCita = document.createElement('div');
+                    divCita.className = `calendar-appointment ${claseUrgencia}`;
+                    divCita.innerHTML = `
+                        <div style="font-weight:bold;">${cita.negocio}</div>
+                        <div style="font-size:0.9em; color:#666;">${cita.encargado || 'Sin encargado'}</div>
+                        <div style="font-size:0.9em; color:#666;">📞 ${cita.telefono || 'Sin teléfono'}</div>
+                        <div style="font-size:0.8em; color:#888;">⏰ ${formatearHora(cita.cita)}</div>
+                        <div style="margin-top:5px;">
+                            <button class="btn-icon" style="background:#00bcd4; font-size:11px;" onclick="window.open('https://www.google.com/maps/search/?api=1&query=${cita.lat||''},${cita.lng||''}','_blank')">🗺️</button>
+                            <button class="btn-icon btn-warning" style="font-size:11px;" onclick="editar(${cita.id}); mostrar('view-form')">✏️</button>
+                            <button class="btn-icon btn-danger" style="font-size:11px;" onclick="borrarCita(${cita.id})">🗑️</button>
+                        </div>
+                    `;
+                    listaCitas.appendChild(divCita);
+                });
+            });
+        }
+
+        function borrarCita(id) {
+            if(confirm("¿Eliminar esta cita? El cliente se mantendrá en el sistema.")) {
+                const cliente = db.find(x => x.id === id);
+                if(cliente) {
+                    cliente.cita = '';
+                    guardarDB();
+                    filtrarCitas();
+                    actualizarEstadisticas();
+                    actualizarBadgeCalendario();
+                }
+            }
+        }
+
+        function formatearFecha(fechaStr) {
+            const fecha = new Date(fechaStr);
+            return fecha.toLocaleDateString('es-GT', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        function formatearHora(fechaHoraStr) {
+            const fecha = new Date(fechaHoraStr);
+            return fecha.toLocaleTimeString('es-GT', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+        }
+
+        // --- SISTEMA DE NOTIFICACIONES ---
+        function iniciarVerificacionRecordatorios() {
+            // Verificar cada minuto
+            notificacionInterval = setInterval(verificarRecordatorios, 60000);
+        }
+
+        function verificarRecordatorios() {
+            const ahora = new Date();
+            const dentroDe1Hora = new Date(ahora.getTime() + 60 * 60 * 1000);
+            
+            const citasProximas = db.filter(c => {
+                if(!c.cita) return false;
+                const fechaCita = new Date(c.cita);
+                return fechaCita > ahora && fechaCita <= dentroDe1Hora;
+            });
+            
+            if(citasProximas.length > 0) {
+                mostrarNotificacion(citasProximas[0]);
+            }
+        }
+
+        function mostrarNotificacion(cita) {
+            const modal = document.getElementById('notificationModal');
+            const modalBody = document.getElementById('modalBody');
+            
+            const fechaCita = new Date(cita.cita);
+            const tiempoRestante = Math.round((fechaCita - new Date()) / (1000 * 60));
+            
+            modalBody.innerHTML = `
+                <div style="font-weight:bold; margin-bottom:5px;">${cita.negocio}</div>
+                <div>${cita.encargado || 'Sin encargado'}</div>
+                <div>📞 ${cita.telefono || 'Sin teléfono'}</div>
+                <div>⏰ ${formatearHora(cita.cita)} (en ${tiempoRestante} minutos)</div>
+                ${cita.direccion ? `<div>📍 ${cita.direccion}</div>` : ''}
+            `;
+            
+            modal.style.display = 'flex';
+            
+            // Sonido de notificación (opcional)
+            try {
+                const audio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ');
+                audio.play();
+            } catch(e) {}
+        }
+
+        function cerrarModal() {
+            document.getElementById('notificationModal').style.display = 'none';
+        }
+
+        function verCalendario() {
+            cerrarModal();
+            mostrar('view-calendar');
+            filtrarCitasHoy();
+        }
 
         // FUNCIÓN PARA CARGAR DEPARTAMENTOS EN TODOS LOS SELECT
         function cargarDepartamentosEnSelects() {
@@ -361,10 +701,16 @@
             if(id=='view-dashboard') {
                 document.getElementById('btn-home').classList.add('active');
                 renderDashboard();
+                actualizarEstadisticas();
             }
             if(id=='view-ruta') { 
                 document.getElementById('btn-ruta').classList.add('active'); 
                 renderRuta(); 
+            }
+            if(id=='view-calendar') {
+                document.getElementById('btn-cal').classList.add('active');
+                document.getElementById('fechaCalendario').value = new Date().toISOString().split('T')[0];
+                filtrarCitasHoy();
             }
             if(id=='view-form') document.getElementById('btn-add').classList.add('active');
             if(id=='view-reportes') {
@@ -441,6 +787,7 @@
                         ${c.contactoLlamada ? '<span style="font-size:0.7em; color:#4285F4; margin-right:5px;">📞 Llamada</span>' : ''}
                         ${c.contactoOtro ? '<span style="font-size:0.7em; color:#757575;">🔘 Otro</span>' : ''}
                         ${visitado ? `<span class="tag-visited">✅ GESTIONADO HOY</span>` : `<span style="font-size:0.8em; color:#999;">📅 Última gestión: ${c.fecha||'N/A'}</span>`}
+                        ${c.cita ? `<div style="font-size:0.7em; color:#9c27b0; margin-top:3px;">📅 Cita: ${c.cita.split('T')[0]}</div>` : ''}
                     </div>
                     <div style="display:flex; flex-direction:column; gap:8px; justify-content:center; margin-left:5px;">
                         ${mapLink ? `<button class="btn-icon" style="background:#00bcd4;" onclick="window.open('${mapLink}','_blank')">🗺️</button>` : ''}
@@ -788,9 +1135,14 @@
                 ruta = ruta.filter(x => x !== id);
                 guardarDB(); 
                 renderDashboard();
+                actualizarEstadisticas();
+                actualizarBadgeCalendario();
                 // Si estamos en reportes, regenerar el reporte
                 if (!document.getElementById('view-reportes').classList.contains('hidden')) {
                     regenerarReporteActual();
+                }
+                if (!document.getElementById('view-calendar').classList.contains('hidden')) {
+                    filtrarCitas();
                 }
             }
         }
@@ -922,6 +1274,8 @@
             limpiarForm();
             mostrar('view-dashboard');
             renderDashboard();
+            actualizarEstadisticas();
+            actualizarBadgeCalendario();
         }
         
         function guardarDB() { 
@@ -1047,6 +1401,8 @@
                 ruta = ruta.filter(x => x !== id);
                 guardarDB();
                 renderDashboard();
+                actualizarEstadisticas();
+                actualizarBadgeCalendario();
                 regenerarReporteActual();
             }
         }
@@ -1083,6 +1439,8 @@
                     guardarDB();
                     alert(`✅ Se eliminaron ${clientesAEliminar.length} cliente(s) exitosamente.`);
                     renderDashboard();
+                    actualizarEstadisticas();
+                    actualizarBadgeCalendario();
                     regenerarReporteActual();
                 }
             } else {
