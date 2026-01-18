@@ -3,102 +3,511 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ruta Comercial GT v9</title>
+    <meta name="theme-color" content="#1565c0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Ruta Comercial GT v10</title>
+    
     <style>
         /* ESTILOS BASE */
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f2f4f8; margin: 0; padding: 0; padding-bottom: 80px; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f2f4f8; 
+            margin: 0; 
+            padding: 0; 
+            padding-bottom: 80px; 
+            -webkit-tap-highlight-color: transparent;
+        }
         
-        header { background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%); color: white; padding: 12px 15px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .header-content { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .header-info { flex: 1; }
-        .app-title { font-weight: bold; font-size: 1.1em; margin-bottom: 3px; }
-        .header-date { font-size: 0.8em; opacity: 0.9; }
-        .header-buttons { display: flex; align-items: center; gap: 10px; }
+        header { 
+            background: linear-gradient(135deg, #0d47a1 0%, #1565c0 100%); 
+            color: white; 
+            padding: 12px 15px; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .header-content { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            width: 100%; 
+        }
+        .header-info { 
+            flex: 1; 
+        }
+        .app-title { 
+            font-weight: bold; 
+            font-size: 1.1em; 
+            margin-bottom: 3px; 
+        }
+        .header-date { 
+            font-size: 0.8em; 
+            opacity: 0.9; 
+        }
+        .header-buttons { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
         
-        .container { max-width: 800px; margin: 0 auto; padding: 10px; }
-        .card { background: white; padding: 18px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); margin-bottom: 15px; border: 1px solid #e8ecf1; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 10px; 
+        }
+        .card { 
+            background: white; 
+            padding: 18px; 
+            border-radius: 12px; 
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08); 
+            margin-bottom: 15px; 
+            border: 1px solid #e8ecf1; 
+            transition: transform 0.2s ease, box-shadow 0.2s ease; 
+        }
+        .card:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
+        }
         
-        h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #f0f2f5; padding-bottom: 10px; font-size: 1.1em; }
-        label { font-weight: 600; font-size: 0.85em; color: #5f6368; display: block; margin-top: 12px; }
+        h3 { 
+            margin-top: 0; 
+            color: #2c3e50; 
+            border-bottom: 2px solid #f0f2f5; 
+            padding-bottom: 10px; 
+            font-size: 1.1em; 
+        }
+        label { 
+            font-weight: 600; 
+            font-size: 0.85em; 
+            color: #5f6368; 
+            display: block; 
+            margin-top: 12px; 
+        }
         
         /* Inputs mejorados */
-        input, select { width: 100%; padding: 12px; margin-top: 5px; border: 1.5px solid #d1d9e6; border-radius: 8px; font-size: 16px; background-color: #fff; height: 45px; transition: border-color 0.3s; }
-        input:focus, select:focus { outline: none; border-color: #1976d2; box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1); }
+        input, select { 
+            width: 100%; 
+            padding: 12px; 
+            margin-top: 5px; 
+            border: 1.5px solid #d1d9e6; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            background-color: #fff; 
+            height: 45px; 
+            transition: border-color 0.3s; 
+        }
+        input:focus, select:focus { 
+            outline: none; 
+            border-color: #1976d2; 
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1); 
+        }
         
         /* BOTONES mejorados */
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; letter-spacing: 0.3px; margin-top: 15px; color: white; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .btn:active { transform: scale(0.97); }
-        .btn-primary { background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%); }
-        .btn-success { background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%); }
-        .btn-secondary { background: linear-gradient(135deg, #757575 0%, #9e9e9e 100%); }
-        .btn-warning { background: linear-gradient(135deg, #fbc02d 0%, #ffeb3b 100%); color: #333; }
-        .btn-danger { background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%); }
-        .btn-dark { background: linear-gradient(135deg, #263238 0%, #455a64 100%); }
-        .btn-info { background: linear-gradient(135deg, #0288d1 0%, #03a9f4 100%); }
+        .btn { 
+            width: 100%; 
+            padding: 12px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 15px; 
+            font-weight: 600; 
+            letter-spacing: 0.3px; 
+            margin-top: 15px; 
+            color: white; 
+            transition: 0.2s; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        }
+        .btn:active { 
+            transform: scale(0.97); 
+        }
+        .btn-primary { 
+            background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%); 
+        }
+        .btn-success { 
+            background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%); 
+        }
+        .btn-secondary { 
+            background: linear-gradient(135deg, #757575 0%, #9e9e9e 100%); 
+        }
+        .btn-warning { 
+            background: linear-gradient(135deg, #fbc02d 0%, #ffeb3b 100%); 
+            color: #333; 
+        }
+        .btn-danger { 
+            background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%); 
+        }
+        .btn-dark { 
+            background: linear-gradient(135deg, #263238 0%, #455a64 100%); 
+        }
+        .btn-info { 
+            background: linear-gradient(135deg, #0288d1 0%, #03a9f4 100%); 
+        }
 
         /* Botones Pequeños */
-        .btn-icon { padding: 6px 10px; border-radius: 6px; border: none; cursor: pointer; color: white; margin-left: 2px; font-size: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .btn-icon { 
+            padding: 6px 10px; 
+            border-radius: 6px; 
+            border: none; 
+            cursor: pointer; 
+            color: white; 
+            margin-left: 2px; 
+            font-size: 14px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2); 
+        }
         
         /* Checkbox */
-        .check-ruta { width: 24px; height: 24px; margin-right: 12px; vertical-align: middle; accent-color: #1976d2; }
+        .check-ruta { 
+            width: 24px; 
+            height: 24px; 
+            margin-right: 12px; 
+            vertical-align: middle; 
+            accent-color: #1976d2; 
+        }
 
         /* MENÚ INFERIOR mejorado */
-        .nav-bar { display: flex; justify-content: space-around; background: white; padding: 8px 0; position: fixed; bottom: 0; width: 100%; border-top: 1px solid #ddd; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
-        .nav-btn { background: none; border: none; color: #5f6368; font-size: 10px; cursor: pointer; display: flex; flex-direction: column; align-items: center; width: 20%; position: relative; transition: color 0.3s; }
-        .nav-btn.active { color: #1565c0; font-weight: bold; }
-        .nav-icon { font-size: 22px; margin-bottom: 2px; }
-        .badge { background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%); color: white; border-radius: 50%; padding: 3px 6px; font-size: 10px; position: absolute; top: -2px; right: 15%; font-weight: bold; min-width: 18px; text-align: center; }
-        .notification-dot { width: 8px; height: 8px; background: #ff4757; border-radius: 50%; position: absolute; top: 2px; right: 20%; }
+        .nav-bar { 
+            display: flex; 
+            justify-content: space-around; 
+            background: white; 
+            padding: 8px 0; 
+            position: fixed; 
+            bottom: 0; 
+            width: 100%; 
+            border-top: 1px solid #ddd; 
+            z-index: 1000; 
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1); 
+        }
+        .nav-btn { 
+            background: none; 
+            border: none; 
+            color: #5f6368; 
+            font-size: 10px; 
+            cursor: pointer; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            width: 20%; 
+            position: relative; 
+            transition: color 0.3s; 
+        }
+        .nav-btn.active { 
+            color: #1565c0; 
+            font-weight: bold; 
+        }
+        .nav-icon { 
+            font-size: 22px; 
+            margin-bottom: 2px; 
+        }
+        .badge { 
+            background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%); 
+            color: white; 
+            border-radius: 50%; 
+            padding: 3px 6px; 
+            font-size: 10px; 
+            position: absolute; 
+            top: -2px; 
+            right: 15%; 
+            font-weight: bold; 
+            min-width: 18px; 
+            text-align: center; 
+        }
+        .notification-dot { 
+            width: 8px; 
+            height: 8px; 
+            background: #ff4757; 
+            border-radius: 50%; 
+            position: absolute; 
+            top: 2px; 
+            right: 20%; 
+        }
 
         /* ETIQUETAS mejoradas */
-        .tag-visited { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); color: #2e7d32; padding: 4px 10px; border-radius: 20px; font-size: 0.75em; font-weight: bold; border: 1px solid #a5d6a7; display: inline-block; margin-top: 5px; }
-        .tag-dept { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); color: #1565c0; padding: 4px 10px; border-radius: 20px; font-size: 0.75em; font-weight: bold; text-transform: uppercase; border: 1px solid #90caf9; }
+        .tag-visited { 
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); 
+            color: #2e7d32; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            font-size: 0.75em; 
+            font-weight: bold; 
+            border: 1px solid #a5d6a7; 
+            display: inline-block; 
+            margin-top: 5px; 
+        }
+        .tag-dept { 
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); 
+            color: #1565c0; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            font-size: 0.75em; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            border: 1px solid #90caf9; 
+        }
 
         /* TABLA REPORTES mejorada */
-        table { width: 100%; border-collapse: collapse; font-size: 0.8em; margin-top: 10px; border-radius: 8px; overflow: hidden; }
-        th, td { border: 1px solid #e0e0e0; padding: 10px; text-align: left; }
-        th { background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%); font-weight: bold; color: #333; }
-        .hidden { display: none !important; }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 0.8em; 
+            margin-top: 10px; 
+            border-radius: 8px; 
+            overflow: hidden; 
+        }
+        th, td { 
+            border: 1px solid #e0e0e0; 
+            padding: 10px; 
+            text-align: left; 
+        }
+        th { 
+            background: linear-gradient(135deg, #f5f5f5 0%, #eeeeee 100%); 
+            font-weight: bold; 
+            color: #333; 
+        }
+        .hidden { 
+            display: none !important; 
+        }
 
         /* Checkboxes de contacto mejorados */
-        .contact-options { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px; }
-        .contact-option { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; background: #f8f9fa; }
-        .contact-option input[type="checkbox"] { width: 20px; height: 20px; accent-color: #1976d2; }
-        .contact-label { font-size: 0.85em; color: #333; font-weight: 500; }
+        .contact-options { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 15px; 
+            margin-top: 10px; 
+        }
+        .contact-option { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            padding: 8px 12px; 
+            border-radius: 8px; 
+            background: #f8f9fa; 
+        }
+        .contact-option input[type="checkbox"] { 
+            width: 20px; 
+            height: 20px; 
+            accent-color: #1976d2; 
+        }
+        .contact-label { 
+            font-size: 0.85em; 
+            color: #333; 
+            font-weight: 500; 
+        }
 
         /* Colores para las opciones de contacto */
-        .whatsapp-option { border-left: 4px solid #25D366; }
-        .call-option { border-left: 4px solid #4285F4; }
-        .other-option { border-left: 4px solid #757575; }
+        .whatsapp-option { 
+            border-left: 4px solid #25D366; 
+        }
+        .call-option { 
+            border-left: 4px solid #4285F4; 
+        }
+        .other-option { 
+            border-left: 4px solid #757575; 
+        }
 
         /* Buscador mejorado */
-        .search-container { position: relative; margin-top: 10px; }
-        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #666; font-size: 1.1em; }
-        .search-input { padding-left: 40px !important; background: #f8f9fa; border: 1px solid #e0e0e0; }
+        .search-container { 
+            position: relative; 
+            margin-top: 10px; 
+        }
+        .search-icon { 
+            position: absolute; 
+            left: 12px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            color: #666; 
+            font-size: 1.1em; 
+        }
+        .search-input { 
+            padding-left: 40px !important; 
+            background: #f8f9fa; 
+            border: 1px solid #e0e0e0; 
+        }
 
         /* Indicador de optimización mejorado */
-        .route-optimized { background: linear-gradient(135deg, #e8f5e9 0%, #d7eed9 100%) !important; border-left: 5px solid #2e7d32 !important; }
-        .route-distance { font-size: 0.8em; color: #666; margin-left: 5px; font-weight: 500; }
+        .route-optimized { 
+            background: linear-gradient(135deg, #e8f5e9 0%, #d7eed9 100%) !important; 
+            border-left: 5px solid #2e7d32 !important; 
+        }
+        .route-distance { 
+            font-size: 0.8em; 
+            color: #666; 
+            margin-left: 5px; 
+            font-weight: 500; 
+        }
 
         /* Calendario */
-        .calendar-day { background: #e3f2fd; padding: 5px; border-radius: 8px; margin-bottom: 10px; }
-        .calendar-appointment { background: white; padding: 10px; border-radius: 6px; margin: 5px 0; border-left: 4px solid #1976d2; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .calendar-appointment.urgent { border-left-color: #f44336; }
-        .calendar-appointment.upcoming { border-left-color: #ff9800; }
+        .calendar-day { 
+            background: #e3f2fd; 
+            padding: 5px; 
+            border-radius: 8px; 
+            margin-bottom: 10px; 
+        }
+        .calendar-appointment { 
+            background: white; 
+            padding: 10px; 
+            border-radius: 6px; 
+            margin: 5px 0; 
+            border-left: 4px solid #1976d2; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+        }
+        .calendar-appointment.urgent { 
+            border-left-color: #f44336; 
+        }
+        .calendar-appointment.upcoming { 
+            border-left-color: #ff9800; 
+        }
 
         /* Estadísticas */
-        .stats-container { display: flex; gap: 10px; margin-bottom: 15px; }
-        .stat-card { flex: 1; background: white; padding: 12px; border-radius: 8px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .stat-number { font-size: 1.5em; font-weight: bold; color: #1976d2; }
-        .stat-label { font-size: 0.8em; color: #666; }
+        .stats-container { 
+            display: flex; 
+            gap: 10px; 
+            margin-bottom: 15px; 
+        }
+        .stat-card { 
+            flex: 1; 
+            background: white; 
+            padding: 12px; 
+            border-radius: 8px; 
+            text-align: center; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+        }
+        .stat-number { 
+            font-size: 1.5em; 
+            font-weight: bold; 
+            color: #1976d2; 
+        }
+        .stat-label { 
+            font-size: 0.8em; 
+            color: #666; 
+        }
 
         /* Modal de notificación */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 20px; border-radius: 12px; max-width: 400px; width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-        .modal-header { font-weight: bold; font-size: 1.2em; margin-bottom: 10px; color: #333; }
-        .modal-body { margin-bottom: 15px; }
-        .modal-footer { text-align: right; }
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            z-index: 2000; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        .modal-content { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 12px; 
+            max-width: 400px; 
+            width: 90%; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+        }
+        .modal-header { 
+            font-weight: bold; 
+            font-size: 1.2em; 
+            margin-bottom: 10px; 
+            color: #333; 
+        }
+        .modal-body { 
+            margin-bottom: 15px; 
+        }
+        .modal-footer { 
+            text-align: right; 
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        .toast {
+            background: #333;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 300px;
+        }
+        
+        .toast.success {
+            background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+        }
+        
+        .toast.error {
+            background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%);
+        }
+        
+        .toast.warning {
+            background: linear-gradient(135deg, #f57c00 0%, #ff9800 100%);
+            color: #333;
+        }
+        
+        .toast.info {
+            background: linear-gradient(135deg, #0288d1 0%, #03a9f4 100%);
+        }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 3000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* PWA Install Button */
+        .install-btn {
+            background: linear-gradient(135deg, #FF4081 0%, #F50057 100%);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            display: none;
+        }
 
         @media print {
             .no-print, .nav-bar, header { display: none !important; }
@@ -112,17 +521,26 @@
     <header class="no-print">
         <div class="header-content">
             <div class="header-info">
-                <div class="app-title">Ruta Comercial GT v9</div>
+                <div class="app-title">Ruta Comercial GT v10</div>
                 <div id="fecha-header" class="header-date">
                     <!-- Fecha se actualizará con JavaScript -->
                 </div>
             </div>
             <div class="header-buttons">
+                <button class="install-btn" id="installButton">📲 Instalar App</button>
                 <span id="notificacion-badge" class="badge hidden">0</span>
                 <button class="btn-icon btn-warning" onclick="limpiarRuta()" style="font-size:11px; padding:5px 8px; color:black; font-weight:bold;">Limpiar Ruta</button>
             </div>
         </div>
     </header>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
 
     <!-- Modal de Notificaciones -->
     <div id="notificationModal" class="modal">
@@ -202,57 +620,57 @@
                 <input type="hidden" id="flagRuta" value="0">
                 
                 <label>Negocio / Cliente *</label>
-                <input type="text" id="negocio" placeholder="Nombre del local">
+                <input type="text" id="negocio" placeholder="Nombre del local" oninput="marcarFormularioModificado()">
 
                 <label>Departamento *</label>
-                <select id="departamento">
+                <select id="departamento" onchange="marcarFormularioModificado()">
                     <!-- Los departamentos se cargarán con JavaScript -->
                 </select>
 
                 <label>Dirección (Referencia)</label>
-                <input type="text" id="direccion" placeholder="Ej: Frente al parque...">
+                <input type="text" id="direccion" placeholder="Ej: Frente al parque..." oninput="marcarFormularioModificado()">
 
                 <label>Encargado</label>
-                <input type="text" id="encargado">
+                <input type="text" id="encargado" oninput="marcarFormularioModificado()">
 
                 <label>Teléfono * (8 dígitos)</label>
                 <input type="tel" id="telefono" maxlength="8" pattern="[0-9]{8}" placeholder="12345678" 
-                       oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,8)">
+                       oninput="formatearTelefono(this); marcarFormularioModificado()">
                 
                 <label>Opciones de Contacto</label>
                 <div class="contact-options">
                     <div class="contact-option whatsapp-option">
-                        <input type="checkbox" id="contactoWhatsApp" value="whatsapp">
+                        <input type="checkbox" id="contactoWhatsApp" value="whatsapp" onchange="marcarFormularioModificado()">
                         <label class="contact-label" for="contactoWhatsApp">WhatsApp</label>
                     </div>
                     <div class="contact-option call-option">
-                        <input type="checkbox" id="contactoLlamada" value="llamada">
+                        <input type="checkbox" id="contactoLlamada" value="llamada" onchange="marcarFormularioModificado()">
                         <label class="contact-label" for="contactoLlamada">Llamada</label>
                     </div>
                     <div class="contact-option other-option">
-                        <input type="checkbox" id="contactoOtro" value="otro">
+                        <input type="checkbox" id="contactoOtro" value="otro" onchange="marcarFormularioModificado()">
                         <label class="contact-label" for="contactoOtro">Otro</label>
                     </div>
                 </div>
 
                 <label>Mensaje para WhatsApp</label>
-                <input type="text" id="mensajeWhatsApp" placeholder="Mensaje personalizado (opcional)">
+                <input type="text" id="mensajeWhatsApp" placeholder="Mensaje personalizado (opcional)" oninput="marcarFormularioModificado()">
                 
                 <label>Próxima Cita / Recordatorio</label>
-                <input type="datetime-local" id="cita">
+                <input type="datetime-local" id="cita" oninput="marcarFormularioModificado()">
                 
                 <label>Opciones de Contacto para la Cita</label>
                 <div class="contact-options">
                     <div class="contact-option whatsapp-option">
-                        <input type="checkbox" id="citaWhatsApp" value="whatsapp">
+                        <input type="checkbox" id="citaWhatsApp" value="whatsapp" onchange="marcarFormularioModificado()">
                         <label class="contact-label" for="citaWhatsApp">Recordatorio por WhatsApp</label>
                     </div>
                     <div class="contact-option call-option">
-                        <input type="checkbox" id="citaLlamada" value="llamada">
+                        <input type="checkbox" id="citaLlamada" value="llamada" onchange="marcarFormularioModificado()">
                         <label class="contact-label" for="citaLlamada">Recordatorio por Llamada</label>
                     </div>
                     <div class="contact-option other-option">
-                        <input type="checkbox" id="citaOtro" value="otro">
+                        <input type="checkbox" id="citaOtro" value="otro" onchange="marcarFormularioModificado()">
                         <label class="contact-label" for="citaOtro">Otro método</label>
                     </div>
                 </div>
@@ -260,7 +678,7 @@
                 <button class="btn btn-warning" onclick="agendarCal()">📅 Agendar en Calendar</button>
 
                 <div style="display:flex; gap:10px; margin-top:15px;">
-                    <button class="btn btn-secondary" onclick="volver()">Cancelar</button>
+                    <button class="btn btn-secondary" onclick="volverConConfirmacion()">Cancelar</button>
                     <button class="btn btn-primary" onclick="irGPS()">Siguiente ➡️</button>
                 </div>
             </div>
@@ -362,6 +780,7 @@
             <div class="no-print" style="display: flex; gap: 10px; margin-top: 15px;">
                 <button class="btn btn-secondary" onclick="window.print()">🖨️ IMPRIMIR / PDF</button>
                 <button class="btn btn-info" onclick="exportarCSV()">📥 EXPORTAR A CSV</button>
+                <button class="btn btn-warning" onclick="realizarBackupManual()">💾 BACKUP MANUAL</button>
             </div>
         </div>
 
@@ -376,7 +795,7 @@
     </div>
 
     <script>
-        // --- BASE DE DATOS DE DEPARTAMENTOS ---
+        // --- CONSTANTES Y VARIABLES GLOBALES ---
         const LISTA_DEPARTAMENTOS = [
             "Alta Verapaz", "Baja Verapaz", "Chimaltenango", "Chiquimula", "El Progreso", 
             "Escuintla", "Guatemala", "Huehuetenango", "Izabal", "Jalapa", "Jutiapa", 
@@ -390,6 +809,108 @@
         let rutaOptimizada = false;
         let ubicacionActual = null;
         let notificacionInterval = null;
+        let deferredPrompt = null;
+        let formDirty = false;
+        let notificationPermission = false;
+
+        // --- TOAST NOTIFICATIONS ---
+        function showToast(message, type = 'info', duration = 3000) {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                ${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}
+                <span>${message}</span>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+
+        // --- LOADING OVERLAY ---
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        // --- SANITIZACIÓN DE DATOS ---
+        function sanitizeInput(input) {
+            if (typeof input !== 'string') return input;
+            return input.replace(/[<>]/g, '').trim();
+        }
+
+        function validatePhone(phone) {
+            return /^[0-9]{8}$/.test(phone);
+        }
+
+        // --- BACKUP AUTOMÁTICO ---
+        function crearBackupAutomatico() {
+            try {
+                const backupData = {
+                    db_clientes: db,
+                    db_ruta: ruta,
+                    timestamp: new Date().toISOString(),
+                    version: 'v10'
+                };
+                localStorage.setItem('backup_' + Date.now(), JSON.stringify(backupData));
+                
+                // Mantener solo últimos 5 backups
+                const keys = Object.keys(localStorage).filter(k => k.startsWith('backup_'));
+                if(keys.length > 5) {
+                    keys.sort().slice(0, -5).forEach(k => localStorage.removeItem(k));
+                }
+            } catch(e) {
+                console.error("Error en backup:", e);
+            }
+        }
+
+        function realizarBackupManual() {
+            const fecha = new Date().toISOString().replace(/[:.]/g, '-');
+            const backupData = {
+                clientes: db,
+                ruta: ruta,
+                fecha: fecha,
+                totalClientes: db.length
+            };
+            
+            const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `backup_ruta_${fecha}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('✅ Backup descargado exitosamente', 'success');
+        }
+
+        // --- PWA INSTALLATION ---
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installButton = document.getElementById('installButton');
+            installButton.style.display = 'block';
+            
+            installButton.addEventListener('click', () => {
+                installButton.style.display = 'none';
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        showToast('✅ Aplicación instalada', 'success');
+                    }
+                    deferredPrompt = null;
+                });
+            });
+        });
 
         // --- INICIALIZACIÓN ---
         document.addEventListener("DOMContentLoaded", () => {
@@ -399,16 +920,88 @@
             actualizarFechaHeader();
             actualizarEstadisticas();
             actualizarBadgeCalendario();
+            verificarIntegridadDatos();
+            solicitarPermisosNotificaciones();
             
             // Configurar fecha actual en el filtro de reportes
             document.getElementById('repFecha').value = new Date().toISOString().split('T')[0];
             
             // Iniciar verificación de recordatorios cada minuto
             iniciarVerificacionRecordatorios();
-            
-            // Verificar recordatorios inmediatamente
             verificarRecordatorios();
+            
+            // Detectar cambios offline/online
+            window.addEventListener('online', () => {
+                showToast('✅ Conectado a internet', 'success');
+            });
+            
+            window.addEventListener('offline', () => {
+                showToast('⚠️ Sin conexión a internet', 'warning');
+            });
+            
+            // Prevenir recarga accidental
+            window.addEventListener('beforeunload', (e) => {
+                if (formDirty) {
+                    e.preventDefault();
+                    e.returnValue = '';
+                }
+            });
         });
+
+        // --- PERMISOS DE NOTIFICACIONES ---
+        async function solicitarPermisosNotificaciones() {
+            if (!('Notification' in window)) {
+                console.log('Este navegador no soporta notificaciones');
+                return;
+            }
+            
+            if (Notification.permission === 'granted') {
+                notificationPermission = true;
+            } else if (Notification.permission !== 'denied') {
+                const permission = await Notification.requestPermission();
+                notificationPermission = permission === 'granted';
+            }
+        }
+
+        function mostrarNotificacionPush(titulo, cuerpo, datos = {}) {
+            if (!notificationPermission) return;
+            
+            const opciones = {
+                body: cuerpo,
+                icon: 'https://cdn-icons-png.flaticon.com/512/3208/3208720.png',
+                badge: 'https://cdn-icons-png.flaticon.com/512/3208/3208720.png',
+                tag: 'ruta_comercial',
+                renotify: true,
+                silent: false,
+                data: datos,
+                actions: [
+                    {
+                        action: 'ver',
+                        title: 'Ver'
+                    },
+                    {
+                        action: 'cerrar',
+                        title: 'Cerrar'
+                    }
+                ]
+            };
+            
+            const notificacion = new Notification(titulo, opciones);
+            
+            notificacion.onclick = function() {
+                window.focus();
+                if (datos.idCliente) {
+                    mostrar('view-calendar');
+                }
+                this.close();
+            };
+            
+            notificacion.onclose = function() {
+                console.log('Notificación cerrada');
+            };
+            
+            setTimeout(() => notificacion.close(), 10000);
+        }
 
         // --- FUNCIONES DE FECHA Y HORA ---
         function actualizarFechaHeader() {
@@ -424,7 +1017,6 @@
             const fechaFormateada = ahora.toLocaleDateString('es-GT', opciones);
             document.getElementById('fecha-header').textContent = fechaFormateada;
             
-            // Actualizar cada minuto
             setTimeout(actualizarFechaHeader, 60000);
         }
 
@@ -488,7 +1080,6 @@
             const primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString().split('T')[0];
             const ultimoDia = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).toISOString().split('T')[0];
             
-            // Mostrar todas las citas del mes
             mostrarCitas(null, primerDia, ultimoDia);
         }
 
@@ -573,15 +1164,16 @@
         }
 
         function borrarCita(id) {
-            if(confirm("¿Eliminar esta cita? El cliente se mantendrá en el sistema.")) {
-                const cliente = db.find(x => x.id === id);
-                if(cliente) {
-                    cliente.cita = '';
-                    guardarDB();
-                    filtrarCitas();
-                    actualizarEstadisticas();
-                    actualizarBadgeCalendario();
-                }
+            const cliente = db.find(x => x.id === id);
+            if(!cliente) return;
+            
+            if(confirm(`¿Eliminar la cita de ${cliente.negocio}?\nFecha: ${cliente.cita ? cliente.cita.split('T')[0] : 'N/A'}`)) {
+                cliente.cita = '';
+                guardarDB();
+                filtrarCitas();
+                actualizarEstadisticas();
+                actualizarBadgeCalendario();
+                showToast('✅ Cita eliminada', 'success');
             }
         }
 
@@ -605,7 +1197,6 @@
 
         // --- SISTEMA DE NOTIFICACIONES ---
         function iniciarVerificacionRecordatorios() {
-            // Verificar cada minuto
             notificacionInterval = setInterval(verificarRecordatorios, 60000);
         }
 
@@ -619,9 +1210,19 @@
                 return fechaCita > ahora && fechaCita <= dentroDe1Hora;
             });
             
-            if(citasProximas.length > 0) {
-                mostrarNotificacion(citasProximas[0]);
-            }
+            citasProximas.forEach(cita => {
+                mostrarNotificacion(cita);
+                
+                // Notificación push si hay permisos
+                if (notificationPermission) {
+                    const tiempoRestante = Math.round((new Date(cita.cita) - ahora) / (1000 * 60));
+                    mostrarNotificacionPush(
+                        '📅 Recordatorio de Cita',
+                        `${cita.negocio} - En ${tiempoRestante} minutos`,
+                        { idCliente: cita.id }
+                    );
+                }
+            });
         }
 
         function mostrarNotificacion(cita) {
@@ -637,11 +1238,16 @@
                 <div>📞 ${cita.telefono || 'Sin teléfono'}</div>
                 <div>⏰ ${formatearHora(cita.cita)} (en ${tiempoRestante} minutos)</div>
                 ${cita.direccion ? `<div>📍 ${cita.direccion}</div>` : ''}
+                <div style="margin-top:10px; font-size:0.9em; color:#666;">
+                    ${cita.citaWhatsApp ? '📱 WhatsApp • ' : ''}
+                    ${cita.citaLlamada ? '📞 Llamada • ' : ''}
+                    ${cita.citaOtro ? '🔘 Otro' : ''}
+                </div>
             `;
             
             modal.style.display = 'flex';
             
-            // Sonido de notificación (opcional)
+            // Sonido de notificación
             try {
                 const audio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ');
                 audio.play();
@@ -669,7 +1275,7 @@
                 option.textContent = depto;
                 selectDepto.appendChild(option);
             });
-            selectDepto.value = "Guatemala"; // Valor por defecto
+            selectDepto.value = "Guatemala";
 
             // Cargar en el filtro del dashboard
             const filtroDash = document.getElementById('filtroDeptDash');
@@ -718,9 +1324,31 @@
             }
         }
         
-        function volver() {
+        function volverConConfirmacion() {
+            if (formDirty && !confirm("⚠️ Tienes cambios sin guardar. ¿Seguro que quieres salir?")) {
+                return;
+            }
+            formDirty = false;
             if(document.getElementById('flagRuta').value == '1') mostrar('view-ruta');
             else mostrar('view-dashboard');
+        }
+        
+        function marcarFormularioModificado() {
+            formDirty = true;
+        }
+
+        // --- VALIDACIÓN DE TELÉFONO ---
+        function formatearTelefono(input) {
+            let value = input.value.replace(/\D/g, '');
+            value = value.substring(0, 8);
+            input.value = value;
+            
+            if(value.length >= 4) {
+                const formatted = `${value.substring(0,4)} ${value.substring(4)}`;
+                input.style.background = "#e8f5e9";
+            } else {
+                input.style.background = "";
+            }
         }
 
         // --- DASHBOARD CON BUSCADOR ---
@@ -731,14 +1359,12 @@
             const hoy = new Date().toISOString().split('T')[0];
             list.innerHTML = '';
 
-            // Filtrar por departamento si se ha seleccionado uno
             let data = [...db];
             
             if(filtroDepto) {
                 data = data.filter(c => c.departamento === filtroDepto);
             }
             
-            // Aplicar búsqueda si hay texto
             if(busqueda) {
                 data = data.filter(c => 
                     (c.negocio && c.negocio.toLowerCase().includes(busqueda)) ||
@@ -748,7 +1374,6 @@
                 );
             }
             
-            // Ordenar: Depto A-Z -> Negocio A-Z
             data.sort((a,b) => {
                 if(a.departamento > b.departamento) return 1;
                 if(a.departamento < b.departamento) return -1;
@@ -792,7 +1417,7 @@
                     <div style="display:flex; flex-direction:column; gap:8px; justify-content:center; margin-left:5px;">
                         ${mapLink ? `<button class="btn-icon" style="background:#00bcd4;" onclick="window.open('${mapLink}','_blank')">🗺️</button>` : ''}
                         <button class="btn-icon btn-warning" onclick="editar(${c.id})">✏️</button>
-                        <button class="btn-icon btn-danger" onclick="borrar(${c.id})">🗑️</button>
+                        <button class="btn-icon btn-danger" onclick="confirmarBorrado(${c.id})">🗑️</button>
                     </div>
                 `;
                 list.appendChild(div);
@@ -805,8 +1430,8 @@
             const i = ruta.indexOf(id);
             if(i < 0) ruta.push(id); 
             else ruta.splice(i,1);
-            rutaOptimizada = false; // Resetear optimización si se modifica la ruta
-            localStorage.setItem('db_ruta_v9', JSON.stringify(ruta));
+            rutaOptimizada = false;
+            guardarDB();
             renderDashboard();
             actualizarBadge();
             if (!document.getElementById('view-ruta').classList.contains('hidden')) {
@@ -825,52 +1450,59 @@
         }
         
         function limpiarRuta() {
-            if(confirm("¿Limpiar toda la ruta pendiente?")) { 
+            const rutaActual = db.filter(c => ruta.includes(c.id));
+            
+            if(rutaActual.length === 0) {
+                showToast("La ruta ya está vacía", 'info');
+                return;
+            }
+            
+            if(confirm(`¿Está seguro de eliminar ${rutaActual.length} cliente(s) de la ruta?\n\nEsta acción no se puede deshacer.`)) { 
                 ruta = []; 
                 rutaOptimizada = false;
-                localStorage.setItem('db_ruta_v9', JSON.stringify(ruta)); 
+                guardarDB(); 
                 renderDashboard(); 
                 renderRuta(); 
-                actualizarBadge(); 
+                actualizarBadge();
+                showToast(`✅ Ruta limpiada (${rutaActual.length} clientes eliminados)`, 'success');
             }
         }
         
-        // Función Haversine para calcular distancia entre dos puntos GPS
         function calcularDistanciaHaversine(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Radio de la Tierra en km
+            const R = 6371;
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
             const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
                       Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
                       Math.sin(dLon/2) * Math.sin(dLon/2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c; // Distancia en km
+            return R * c;
         }
         
-        // Optimizar ruta por proximidad
         function optimizarRuta() {
             const items = db.filter(c => ruta.includes(c.id));
             
             if(items.length < 2) {
-                return alert("Se necesitan al menos 2 clientes en la ruta para optimizar.");
+                showToast("Se necesitan al menos 2 clientes en la ruta", 'warning');
+                return;
             }
             
-            // Verificar que todos los clientes tengan GPS
             const clientesSinGPS = items.filter(c => !c.lat || c.lat === "MANUAL");
             if(clientesSinGPS.length > 0) {
-                alert(`⚠️ ${clientesSinGPS.length} cliente(s) no tienen GPS y no se incluirán en la optimización.`);
+                showToast(`${clientesSinGPS.length} cliente(s) sin GPS se colocarán al final`, 'warning');
             }
             
             const clientesConGPS = items.filter(c => c.lat && c.lat !== "MANUAL");
             
             if(clientesConGPS.length < 2) {
-                return alert("Se necesitan al menos 2 clientes con GPS para optimizar la ruta.");
+                showToast("Se necesitan al menos 2 clientes con GPS para optimizar", 'warning');
+                return;
             }
             
-            // Obtener ubicación actual
             document.getElementById('gpsTxt').textContent = "Buscando ubicación para optimizar...";
             
             if(navigator.geolocation) {
+                showLoading();
                 navigator.geolocation.getCurrentPosition(
                     position => {
                         ubicacionActual = {
@@ -878,7 +1510,8 @@
                             lon: position.coords.longitude
                         };
                         
-                        // Algoritmo simple: ordenar por distancia a la ubicación actual
+                        localStorage.setItem('last_known_location', JSON.stringify(ubicacionActual));
+                        
                         clientesConGPS.sort((a, b) => {
                             const distA = calcularDistanciaHaversine(
                                 ubicacionActual.lat, ubicacionActual.lon,
@@ -891,27 +1524,26 @@
                             return distA - distB;
                         });
                         
-                        // Reconstruir la ruta con el orden optimizado
                         const nuevosIds = clientesConGPS.map(c => c.id);
-                        // Agregar los clientes sin GPS al final
                         const idsSinGPS = clientesSinGPS.map(c => c.id);
                         ruta = [...nuevosIds, ...idsSinGPS];
                         
                         rutaOptimizada = true;
-                        localStorage.setItem('db_ruta_v9', JSON.stringify(ruta));
+                        guardarDB();
                         
+                        hideLoading();
                         renderRuta();
-                        alert(`✅ Ruta optimizada por proximidad. Ordenados ${clientesConGPS.length} clientes por distancia.`);
+                        showToast(`✅ Ruta optimizada para ${clientesConGPS.length} clientes`, 'success');
                     },
                     error => {
-                        alert("No se pudo obtener la ubicación actual. Usando orden por departamento.");
-                        // Ordenar por departamento si no hay GPS
+                        hideLoading();
+                        showToast("Usando orden por departamento", 'info');
                         ordenarRutaPorDepartamento();
                     },
-                    {enableHighAccuracy: true, timeout: 10000}
+                    {enableHighAccuracy: true, timeout: 10000, maximumAge: 0}
                 );
             } else {
-                alert("El navegador no soporta geolocalización. Usando orden por departamento.");
+                showToast("Navegador no soporta geolocalización", 'warning');
                 ordenarRutaPorDepartamento();
             }
         }
@@ -919,7 +1551,6 @@
         function ordenarRutaPorDepartamento() {
             const items = db.filter(c => ruta.includes(c.id));
             
-            // Ordenar por departamento y luego por negocio
             items.sort((a,b) => {
                 if(a.departamento > b.departamento) return 1;
                 if(a.departamento < b.departamento) return -1;
@@ -928,10 +1559,9 @@
                 return 0;
             });
             
-            // Reconstruir ruta con nuevo orden
             ruta = items.map(c => c.id);
             rutaOptimizada = false;
-            localStorage.setItem('db_ruta_v9', JSON.stringify(ruta));
+            guardarDB();
             renderRuta();
         }
         
@@ -952,7 +1582,6 @@
             
             rutaInfo.textContent = `${items.length} cliente(s) en ruta`;
             
-            // Calcular distancia total si la ruta está optimizada y hay GPS
             let distanciaTotal = 0;
             if(rutaOptimizada && items.length > 1) {
                 for(let i = 0; i < items.length - 1; i++) {
@@ -977,7 +1606,6 @@
                 distanciaTotalElem.textContent = '';
             }
             
-            // Mostrar clientes en el orden actual
             items.forEach((c, index) => {
                 const div = document.createElement('div');
                 div.className = 'card';
@@ -1032,18 +1660,21 @@
         
         function abrirMapaRuta() {
             const items = db.filter(c => ruta.includes(c.id) && c.lat && c.lat !== "MANUAL");
-            if(items.length===0) return alert("Agrega clientes con GPS a la ruta primero.");
+            if(items.length===0) {
+                showToast("Agrega clientes con GPS a la ruta primero", 'warning');
+                return;
+            }
             
             let url = "https://www.google.com/maps/dir/";
             
-            // Si hay ubicación actual, empezar desde ahí
-            if(ubicacionActual) {
-                url += `${ubicacionActual.lat},${ubicacionActual.lon}/`;
+            const lastLoc = localStorage.getItem('last_known_location');
+            if(lastLoc) {
+                const loc = JSON.parse(lastLoc);
+                url += `${loc.lat},${loc.lon}/`;
             }
             
-            // Agregar todos los clientes de la ruta
             items.forEach((c, i) => {
-                if(i > 0 || ubicacionActual) url += '/';
+                if(i > 0 || lastLoc) url += '/';
                 url += `${c.lat},${c.lng}`;
             });
             
@@ -1052,6 +1683,9 @@
 
         // --- CRUD (AGREGAR/EDITAR) ---
         function nuevoCliente() { 
+            if (formDirty && !confirm("⚠️ Tienes cambios sin guardar en el formulario actual. ¿Continuar?")) {
+                return;
+            }
             limpiarForm(); 
             document.getElementById('tituloForm').textContent="Nuevo Cliente"; 
             document.getElementById('btnFin').textContent="💾 GUARDAR"; 
@@ -1059,6 +1693,9 @@
         }
         
         function editar(id) { 
+            if (formDirty && !confirm("⚠️ Tienes cambios sin guardar. ¿Continuar?")) {
+                return;
+            }
             cargarForm(id); 
             document.getElementById('tituloForm').textContent="Editar Cliente"; 
             document.getElementById('btnFin').textContent="💾 ACTUALIZAR"; 
@@ -1088,17 +1725,16 @@
             document.getElementById('lng').value = c.lng || '';
             document.getElementById('mensajeWhatsApp').value = c.mensajeWhatsApp || '';
             
-            // Cargar opciones de contacto
             document.getElementById('contactoWhatsApp').checked = c.contactoWhatsApp || false;
             document.getElementById('contactoLlamada').checked = c.contactoLlamada || false;
             document.getElementById('contactoOtro').checked = c.contactoOtro || false;
             
-            // Cargar opciones de contacto para cita
             document.getElementById('citaWhatsApp').checked = c.citaWhatsApp || false;
             document.getElementById('citaLlamada').checked = c.citaLlamada || false;
             document.getElementById('citaOtro').checked = c.citaOtro || false;
             
             document.getElementById('gpsTxt').textContent = c.lat ? "✅ GPS Guardado" : "Sin GPS";
+            formDirty = false;
         }
         
         function limpiarForm() {
@@ -1118,49 +1754,79 @@
             document.getElementById('linkMan').value = '';
             document.getElementById('foto').value = '';
             
-            // Limpiar checkboxes de contacto
             document.getElementById('contactoWhatsApp').checked = false;
             document.getElementById('contactoLlamada').checked = false;
             document.getElementById('contactoOtro').checked = false;
             
-            // Limpiar checkboxes de contacto para cita
             document.getElementById('citaWhatsApp').checked = false;
             document.getElementById('citaLlamada').checked = false;
             document.getElementById('citaOtro').checked = false;
+            
+            formDirty = false;
         }
         
-        function borrar(id) {
-            if(confirm("¿Eliminar este cliente permanentemente?")) {
+        async function confirmarBorrado(id) {
+            const cliente = db.find(x => x.id === id);
+            if(!cliente) return;
+            
+            const nombre = cliente.negocio;
+            const telefono = cliente.telefono || '';
+            
+            if(await confirmarEliminacion(id, nombre)) {
                 db = db.filter(x => x.id !== id); 
                 ruta = ruta.filter(x => x !== id);
                 guardarDB(); 
                 renderDashboard();
                 actualizarEstadisticas();
                 actualizarBadgeCalendario();
-                // Si estamos en reportes, regenerar el reporte
                 if (!document.getElementById('view-reportes').classList.contains('hidden')) {
                     regenerarReporteActual();
                 }
                 if (!document.getElementById('view-calendar').classList.contains('hidden')) {
                     filtrarCitas();
                 }
+                showToast(`✅ Cliente "${nombre}" eliminado`, 'success');
             }
+        }
+        
+        async function confirmarEliminacion(id, nombre = "") {
+            return new Promise((resolve) => {
+                if(confirm(`¿Eliminar ${nombre ? 'a "' + nombre + '"' : 'este cliente'} permanentemente?\n\nEsta acción no se puede deshacer.`)) {
+                    resolve(true);
+                } else {
+                    resolve(false);
+                }
+            });
         }
         
         function irGPS() {
             const telefono = document.getElementById('telefono').value.trim();
-            if(!document.getElementById('negocio').value.trim()) {
-                return alert("El nombre del negocio es obligatorio.");
+            const negocio = document.getElementById('negocio').value.trim();
+            
+            if(!negocio) {
+                showToast("El nombre del negocio es obligatorio", 'error');
+                return;
             }
             if(!telefono) {
-                return alert("El número de teléfono es obligatorio.");
+                showToast("El número de teléfono es obligatorio", 'error');
+                return;
             }
             if(telefono.length !== 8) {
-                return alert("El número de teléfono debe tener 8 dígitos.");
+                showToast("El teléfono debe tener 8 dígitos", 'error');
+                return;
             }
             if(!/^\d+$/.test(telefono)) {
-                return alert("El número de teléfono solo debe contener dígitos.");
+                showToast("El teléfono solo debe contener números", 'error');
+                return;
             }
+            
+            // Verificar duplicados
+            const idActual = parseInt(document.getElementById('idCliente').value);
+            const duplicado = db.find(c => c.telefono === telefono && c.id !== idActual);
+            if(duplicado && !confirm(`⚠️ Este teléfono ya está registrado para: ${duplicado.negocio}\n\n¿Continuar de todos modos?`)) {
+                return;
+            }
+            
             mostrar('view-gps');
         }
         
@@ -1169,22 +1835,57 @@
             s.textContent = "Buscando GPS...";
             
             if(!navigator.geolocation) { 
-                s.textContent = "Error: GPS no soportado"; 
+                s.textContent = "❌ GPS no soportado en este navegador"; 
                 document.getElementById('boxManual').classList.remove('hidden'); 
                 return; 
             }
             
+            let timeoutId = setTimeout(() => {
+                s.textContent = "⏱️ Tiempo agotado. Usando ubicación aproximada...";
+                const lastLat = localStorage.getItem('last_lat');
+                const lastLng = localStorage.getItem('last_lng');
+                if(lastLat && lastLng) {
+                    document.getElementById('lat').value = lastLat;
+                    document.getElementById('lng').value = lastLng;
+                    s.textContent = "📍 Usando última ubicación conocida";
+                } else {
+                    document.getElementById('boxManual').classList.remove('hidden');
+                }
+            }, 10000);
+            
             navigator.geolocation.getCurrentPosition(
                 position => {
-                    document.getElementById('lat').value = position.coords.latitude;
-                    document.getElementById('lng').value = position.coords.longitude;
-                    s.textContent = "✅ Ubicación obtenida correctamente";
+                    clearTimeout(timeoutId);
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    if(lat < 13.5 || lat > 17.8 || lng < -92.3 || lng > -88.2) {
+                        s.textContent = "⚠️ Coordenadas fuera de Guatemala. Verificar.";
+                        document.getElementById('lat').value = lat;
+                        document.getElementById('lng').value = lng;
+                        return;
+                    }
+                    
+                    document.getElementById('lat').value = lat;
+                    document.getElementById('lng').value = lng;
+                    s.textContent = `✅ GPS: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                    
+                    localStorage.setItem('last_lat', lat);
+                    localStorage.setItem('last_lng', lng);
                 }, 
                 error => { 
-                    s.textContent = "❌ Error al obtener GPS"; 
+                    clearTimeout(timeoutId);
+                    let mensaje = "❌ ";
+                    switch(error.code) {
+                        case 1: mensaje += "Permiso denegado"; break;
+                        case 2: mensaje += "Ubicación no disponible"; break;
+                        case 3: mensaje += "Tiempo agotado"; break;
+                        default: mensaje += error.message;
+                    }
+                    s.textContent = mensaje; 
                     document.getElementById('boxManual').classList.remove('hidden'); 
                 }, 
-                {enableHighAccuracy: true, timeout: 10000}
+                {enableHighAccuracy: true, timeout: 8000, maximumAge: 30000}
             );
         }
         
@@ -1194,6 +1895,7 @@
                 document.getElementById('lat').value = "MANUAL"; 
                 document.getElementById('lng').value = link; 
                 document.getElementById('gpsTxt').textContent = "✅ Link guardado"; 
+                showToast("✅ Link de ubicación guardado", 'success');
             }
         }
         
@@ -1211,6 +1913,8 @@
                 document.body.appendChild(a); 
                 a.click(); 
                 document.body.removeChild(a);
+                
+                showToast("✅ Foto descargada exitosamente", 'success');
             }
         });
 
@@ -1219,42 +1923,49 @@
             const id = document.getElementById('idCliente').value;
             const nuevoId = id ? parseInt(id) : Date.now();
             const telefono = document.getElementById('telefono').value.trim();
+            const negocio = sanitizeInput(document.getElementById('negocio').value);
             
             // Validaciones
-            if(!document.getElementById('negocio').value.trim()) {
-                return alert("El nombre del negocio es obligatorio.");
+            if(!negocio) {
+                showToast("El nombre del negocio es obligatorio", 'error');
+                return;
             }
             if(!document.getElementById('departamento').value) {
-                return alert("Debe seleccionar un departamento.");
+                showToast("Debe seleccionar un departamento", 'error');
+                return;
             }
             if(!telefono) {
-                return alert("El número de teléfono es obligatorio.");
+                showToast("El número de teléfono es obligatorio", 'error');
+                return;
             }
             if(telefono.length !== 8) {
-                return alert("El número de teléfono debe tener 8 dígitos.");
+                showToast("El número de teléfono debe tener 8 dígitos", 'error');
+                return;
             }
             if(!/^\d+$/.test(telefono)) {
-                return alert("El número de teléfono solo debe contener dígitos.");
+                showToast("El número de teléfono solo debe contener dígitos", 'error');
+                return;
             }
             
             const data = {
                 id: nuevoId,
-                negocio: document.getElementById('negocio').value.trim(),
+                negocio: negocio,
                 departamento: document.getElementById('departamento').value,
-                direccion: document.getElementById('direccion').value.trim(),
-                encargado: document.getElementById('encargado').value.trim(),
+                direccion: sanitizeInput(document.getElementById('direccion').value),
+                encargado: sanitizeInput(document.getElementById('encargado').value),
                 telefono: telefono,
                 cita: document.getElementById('cita').value,
                 lat: document.getElementById('lat').value,
                 lng: document.getElementById('lng').value,
-                mensajeWhatsApp: document.getElementById('mensajeWhatsApp').value.trim(),
+                mensajeWhatsApp: sanitizeInput(document.getElementById('mensajeWhatsApp').value),
                 contactoWhatsApp: document.getElementById('contactoWhatsApp').checked,
                 contactoLlamada: document.getElementById('contactoLlamada').checked,
                 contactoOtro: document.getElementById('contactoOtro').checked,
                 citaWhatsApp: document.getElementById('citaWhatsApp').checked,
                 citaLlamada: document.getElementById('citaLlamada').checked,
                 citaOtro: document.getElementById('citaOtro').checked,
-                fecha: new Date().toISOString().split('T')[0]
+                fecha: new Date().toISOString().split('T')[0],
+                ultimaModificacion: new Date().toISOString()
             };
 
             const idx = db.findIndex(x => x.id === nuevoId);
@@ -1270,7 +1981,7 @@
             }
 
             guardarDB();
-            alert("✅ Guardado exitosamente");
+            showToast(idx >= 0 ? "✅ Cliente actualizado" : "✅ Cliente guardado", 'success');
             limpiarForm();
             mostrar('view-dashboard');
             renderDashboard();
@@ -1279,8 +1990,50 @@
         }
         
         function guardarDB() { 
-            localStorage.setItem('db_clientes_v9', JSON.stringify(db)); 
-            localStorage.setItem('db_ruta_v9', JSON.stringify(ruta)); 
+            try {
+                localStorage.setItem('db_clientes_v9', JSON.stringify(db)); 
+                localStorage.setItem('db_ruta_v9', JSON.stringify(ruta)); 
+                crearBackupAutomatico();
+            } catch(e) {
+                showToast("❌ Error al guardar: " + e.message, 'error');
+                console.error("Error al guardar:", e);
+            }
+        }
+
+        // --- VERIFICACIÓN DE INTEGRIDAD DE DATOS ---
+        function verificarIntegridadDatos() {
+            const errores = [];
+            
+            db.forEach((cliente, index) => {
+                if(!cliente.id) errores.push(`Cliente ${index}: Sin ID`);
+                if(!cliente.negocio) errores.push(`Cliente ${index}: Sin nombre de negocio`);
+                if(cliente.telefono && !/^[0-9]{8}$/.test(cliente.telefono)) {
+                    errores.push(`Cliente ${index}: Teléfono inválido (${cliente.telefono})`);
+                }
+                
+                if(cliente.lat && cliente.lat !== "MANUAL") {
+                    const lat = parseFloat(cliente.lat);
+                    const lng = parseFloat(cliente.lng);
+                    if(isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                        errores.push(`Cliente ${index}: Coordenadas inválidas`);
+                    }
+                }
+            });
+            
+            const telefonos = db.map(c => c.telefono).filter(t => t);
+            const duplicados = telefonos.filter((t, i) => telefonos.indexOf(t) !== i);
+            if(duplicados.length > 0) {
+                console.warn(`Teléfonos duplicados: ${[...new Set(duplicados)].join(', ')}`);
+            }
+            
+            if(errores.length > 0) {
+                console.warn("Problemas de integridad encontrados:", errores);
+                if(errores.length > 10) {
+                    showToast("⚠️ Se encontraron problemas en la base de datos", 'warning');
+                }
+            }
+            
+            return errores;
         }
 
         // --- REPORTES CON EXPORTACIÓN CSV ---
@@ -1310,11 +2063,9 @@
 
             let datos = [...db];
             
-            // Aplicar filtros
             if(fechaFiltro) datos = datos.filter(c => c.fecha === fechaFiltro);
             if(deptFiltro) datos = datos.filter(c => c.departamento === deptFiltro);
             
-            // Ordenar por departamento y luego por negocio
             datos.sort((a,b) => {
                 if(a.departamento > b.departamento) return 1;
                 if(a.departamento < b.departamento) return -1;
@@ -1329,7 +2080,6 @@
                 return;
             }
 
-            // Agrupar por departamento para mejor visualización
             const agrupados = {};
             datos.forEach(c => {
                 if(!agrupados[c.departamento]) {
@@ -1338,9 +2088,7 @@
                 agrupados[c.departamento].push(c);
             });
 
-            // Construir tabla agrupada
             Object.keys(agrupados).sort().forEach(depto => {
-                // Agregar fila de encabezado del departamento
                 tbody.innerHTML += `
                     <tr style="background:#e3f2fd;">
                         <td colspan="5" style="font-weight:bold; color:#1565c0; text-transform:uppercase;">
@@ -1349,9 +2097,7 @@
                     </tr>
                 `;
                 
-                // Agregar cada cliente del departamento
                 agrupados[depto].forEach(c => {
-                    // Formatear opciones de contacto
                     const opcionesContacto = [];
                     if(c.contactoWhatsApp) opcionesContacto.push('WhatsApp');
                     if(c.contactoLlamada) opcionesContacto.push('Llamada');
@@ -1395,8 +2141,11 @@
                 `Total: ${datos.length} cliente(s) | Departamentos: ${Object.keys(agrupados).length}`;
         }
         
-        function eliminarDesdeReporte(id) {
-            if(confirm("¿Eliminar este cliente permanentemente?")) {
+        async function eliminarDesdeReporte(id) {
+            const cliente = db.find(x => x.id === id);
+            if(!cliente) return;
+            
+            if(await confirmarEliminacion(id, cliente.negocio)) {
                 db = db.filter(x => x.id !== id);
                 ruta = ruta.filter(x => x !== id);
                 guardarDB();
@@ -1404,47 +2153,48 @@
                 actualizarEstadisticas();
                 actualizarBadgeCalendario();
                 regenerarReporteActual();
+                showToast(`✅ Cliente eliminado del reporte`, 'success');
             }
         }
         
         function eliminarTodosDelReporte() {
             if(db.length === 0) {
-                return alert("No hay clientes para eliminar.");
+                showToast("No hay clientes para eliminar", 'info');
+                return;
+            }
+            
+            // Determinar qué clientes están en el reporte actual
+            let clientesAEliminar = [...db];
+            
+            if(filtrosReporteActual.fecha) {
+                clientesAEliminar = clientesAEliminar.filter(c => c.fecha === filtrosReporteActual.fecha);
+            }
+            if(filtrosReporteActual.depto) {
+                clientesAEliminar = clientesAEliminar.filter(c => c.departamento === filtrosReporteActual.depto);
+            }
+            
+            if(clientesAEliminar.length === 0) {
+                showToast("No hay clientes que coincidan con los filtros actuales", 'info');
+                return;
             }
             
             const confirmacion = prompt(`¿Está seguro de eliminar TODOS los clientes? Esta acción no se puede deshacer.\n\nEscriba "ELIMINAR" para confirmar:`);
             
             if(confirmacion === "ELIMINAR") {
-                // Determinar qué clientes están en el reporte actual
-                let clientesAEliminar = [...db];
-                
-                // Aplicar filtros actuales
-                if(filtrosReporteActual.fecha) {
-                    clientesAEliminar = clientesAEliminar.filter(c => c.fecha === filtrosReporteActual.fecha);
-                }
-                if(filtrosReporteActual.depto) {
-                    clientesAEliminar = clientesAEliminar.filter(c => c.departamento === filtrosReporteActual.depto);
-                }
-                
-                if(clientesAEliminar.length === 0) {
-                    return alert("No hay clientes que coincidan con los filtros actuales.");
-                }
-                
                 if(confirm(`⚠️ ADVERTENCIA FINAL\n\nSe eliminarán ${clientesAEliminar.length} cliente(s) permanentemente.\n\n¿Continuar?`)) {
-                    // Eliminar los clientes del reporte actual
                     const idsAEliminar = clientesAEliminar.map(c => c.id);
                     db = db.filter(c => !idsAEliminar.includes(c.id));
                     ruta = ruta.filter(id => !idsAEliminar.includes(id));
                     
                     guardarDB();
-                    alert(`✅ Se eliminaron ${clientesAEliminar.length} cliente(s) exitosamente.`);
+                    showToast(`✅ Se eliminaron ${clientesAEliminar.length} cliente(s) exitosamente`, 'success');
                     renderDashboard();
                     actualizarEstadisticas();
                     actualizarBadgeCalendario();
                     regenerarReporteActual();
                 }
             } else {
-                alert("Eliminación cancelada.");
+                showToast("Eliminación cancelada", 'info');
             }
         }
         
@@ -1466,10 +2216,8 @@
         
         // --- EXPORTACIÓN A CSV ---
         function exportarCSV() {
-            // Obtener los datos filtrados según el reporte actual
             let datos = [...db];
             
-            // Aplicar los mismos filtros que el reporte actual
             if(filtrosReporteActual.fecha) {
                 datos = datos.filter(c => c.fecha === filtrosReporteActual.fecha);
             }
@@ -1478,10 +2226,10 @@
             }
             
             if(datos.length === 0) {
-                return alert("No hay datos para exportar.");
+                showToast("No hay datos para exportar", 'warning');
+                return;
             }
             
-            // Ordenar los datos igual que en el reporte
             datos.sort((a,b) => {
                 if(a.departamento > b.departamento) return 1;
                 if(a.departamento < b.departamento) return -1;
@@ -1490,7 +2238,6 @@
                 return 0;
             });
             
-            // Crear encabezados CSV
             const headers = [
                 'ID',
                 'Negocio',
@@ -1511,12 +2258,11 @@
                 'Longitud'
             ];
             
-            // Crear filas de datos
             const rows = datos.map(c => {
                 return [
                     c.id,
-                    `"${c.negocio.replace(/"/g, '""')}"`,
-                    `"${c.departamento}"`,
+                    `"${(c.negocio || '').replace(/"/g, '""')}"`,
+                    `"${(c.departamento || '').replace(/"/g, '""')}"`,
                     `"${(c.direccion || '').replace(/"/g, '""')}"`,
                     `"${(c.encargado || '').replace(/"/g, '""')}"`,
                     c.telefono || '',
@@ -1534,15 +2280,12 @@
                 ].join(',');
             });
             
-            // Combinar encabezados y filas
             const csvContent = [headers.join(','), ...rows].join('\n');
             
-            // Crear y descargar archivo
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
             
-            // Generar nombre de archivo basado en el tipo de reporte
             let filename = 'reporte_clientes';
             if(filtrosReporteActual.tipo === 'diario') {
                 filename = `visitas_${new Date().toISOString().split('T')[0]}`;
@@ -1557,13 +2300,16 @@
             link.click();
             document.body.removeChild(link);
             
-            alert(`✅ Se exportaron ${datos.length} registros a CSV.`);
+            showToast(`✅ Se exportaron ${datos.length} registros a CSV`, 'success');
         }
         
         function agendarCal() {
             const n = document.getElementById('negocio').value;
             const c = document.getElementById('cita').value;
-            if(!c) return alert("Seleccione fecha y hora para la cita.");
+            if(!c) {
+                showToast("Seleccione fecha y hora para la cita", 'warning');
+                return;
+            }
             
             const fecha = new Date(c);
             const inicio = fecha.toISOString().replace(/-|:|\.\d\d\d/g,"");
