@@ -146,6 +146,12 @@
         .btn-info { 
             background: linear-gradient(135deg, #0288d1 0%, #03a9f4 100%); 
         }
+        .btn-cloud-up {
+            background: linear-gradient(135deg, #5c6bc0 0%, #3f51b5 100%);
+        }
+        .btn-cloud-down {
+            background: linear-gradient(135deg, #ff7043 0%, #f4511e 100%);
+        }
 
         /* Botones Pequeños */
         .btn-icon { 
@@ -523,8 +529,7 @@
             <div class="header-info">
                 <div class="app-title">Ruta Comercial GT v10</div>
                 <div id="fecha-header" class="header-date">
-                    <!-- Fecha se actualizará con JavaScript -->
-                </div>
+                    </div>
             </div>
             <div class="header-buttons">
                 <button class="install-btn" id="installButton">📲 Instalar App</button>
@@ -534,15 +539,12 @@
         </div>
     </header>
 
-    <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
     </div>
 
-    <!-- Modal de Notificaciones -->
     <div id="notificationModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">🔔 Recordatorio de Cita</div>
@@ -558,7 +560,6 @@
 
     <div class="container">
 
-        <!-- Estadísticas Rápidas -->
         <div id="view-dashboard" class="view-section">
             <div class="stats-container">
                 <div class="stat-card">
@@ -624,8 +625,7 @@
 
                 <label>Departamento *</label>
                 <select id="departamento" onchange="marcarFormularioModificado()">
-                    <!-- Los departamentos se cargarán con JavaScript -->
-                </select>
+                    </select>
 
                 <label>Dirección (Referencia)</label>
                 <input type="text" id="direccion" placeholder="Ej: Frente al parque..." oninput="marcarFormularioModificado()">
@@ -707,7 +707,6 @@
             </div>
         </div>
 
-        <!-- NUEVA VISTA: CALENDARIO -->
         <div id="view-calendar" class="view-section hidden">
             <div class="card">
                 <h3>📅 Agenda de Citas</h3>
@@ -722,6 +721,22 @@
         </div>
 
         <div id="view-reportes" class="view-section hidden">
+            
+            <div class="card no-print" style="border-left: 5px solid #3f51b5; background: #e8eaf6;">
+                <h3 style="color:#283593;">☁️ Sincronización en la Nube (Google)</h3>
+                <p style="font-size:0.85em; color:#555; margin-bottom:15px;">
+                    Gestiona tus datos entre dispositivos. <strong>Nota:</strong> Se creará un respaldo local automático antes de cualquier acción.
+                </p>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-cloud-up" style="flex: 1;" onclick="sincronizarDrive()">
+                        ☁️⬆️ SUBIR DATOS A LA NUBE
+                    </button>
+                    <button class="btn btn-cloud-down" style="flex: 1;" onclick="descargarDeDrive()">
+                        ☁️⬇️ RESTAURAR DESDE NUBE
+                    </button>
+                </div>
+            </div>
+
             <div class="card no-print">
                 <h3>Generador de Reportes</h3>
                 <p style="font-size:0.9em; color:#555;">Selecciona el informe:</p>
@@ -738,8 +753,7 @@
                     <input type="date" id="repFecha">
                     <select id="filtroDeptReporte">
                         <option value="">Todo Depto</option>
-                        <!-- Los departamentos se cargarán con JavaScript -->
-                    </select>
+                        </select>
                 </div>
                 <button class="btn btn-primary" onclick="reporteCustom()">🔍 Buscar</button>
                 
@@ -796,6 +810,8 @@
 
     <script>
         // --- CONSTANTES Y VARIABLES GLOBALES ---
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyABCRPsi5TwA4BM6pgqVxPMbUqcsO-BRwSJnW-09GY7eJGgbOehrMzfLeQY6isURZ_/exec";
+        
         const LISTA_DEPARTAMENTOS = [
             "Alta Verapaz", "Baja Verapaz", "Chimaltenango", "Chiquimula", "El Progreso", 
             "Escuintla", "Guatemala", "Huehuetenango", "Izabal", "Jalapa", "Jutiapa", 
@@ -884,13 +900,13 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `backup_ruta_${fecha}.json`;
+            a.download = `backup_seguridad_${fecha}.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            showToast('✅ Backup descargado exitosamente', 'success');
+            showToast('✅ Respaldo de seguridad guardado en dispositivo', 'success');
         }
 
         // --- PWA INSTALLATION ---
@@ -2319,6 +2335,112 @@
                 `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(n)}&dates=${inicio}/${fin}`,
                 '_blank'
             );
+        }
+
+        // --- FUNCIONES DE SINCRONIZACIÓN (NUBE) ---
+
+        function sincronizarDrive() {
+            // 1. Validaciones básicas
+            if(db.length === 0) {
+                showToast("No hay datos para sincronizar", "warning");
+                return;
+            }
+            if(!navigator.onLine) {
+                showToast("⚠️ Necesitas internet para sincronizar", "error");
+                return;
+            }
+            if(!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("TU-URL")) {
+                showToast("⚠️ Error en configuración del Servidor (URL)", "error");
+                return;
+            }
+
+            // 2. Respaldo de seguridad OBLIGATORIO antes de tocar nada
+            realizarBackupManual(); 
+
+            // 3. UI Feedback
+            showToast("☁️ Subiendo datos a Google Sheets...", "info");
+            const btnSync = event.target;
+            const textoOriginal = btnSync.textContent;
+            btnSync.textContent = "⏳ Subiendo...";
+            btnSync.disabled = true;
+
+            // 4. Enviar datos
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors", // Necesario para evitar bloqueos simples de Apps Script
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8" // Truco para evitar Preflight CORS
+                },
+                body: JSON.stringify(db)
+            })
+            .then(response => {
+                // Al usar no-cors, la respuesta es opaca. Asumimos éxito si no hay error de red.
+                showToast("✅ ¡Datos enviados a la Nube exitosamente!", "success");
+                btnSync.textContent = textoOriginal;
+                btnSync.disabled = false;
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                showToast("❌ Error de conexión al subir", "error");
+                btnSync.textContent = textoOriginal;
+                btnSync.disabled = false;
+            });
+        }
+
+        async function descargarDeDrive() {
+            if(!navigator.onLine) {
+                showToast("⚠️ Necesitas internet para descargar", "error");
+                return;
+            }
+
+            // 1. Confirmación de seguridad
+            if(!confirm("⚠️ ADVERTENCIA: Esta acción REEMPLAZARÁ todos los datos de este dispositivo con los de la Nube.\n\nSe descargará un respaldo de seguridad automático antes de proceder.\n\n¿Estás seguro?")) {
+                return;
+            }
+
+            // 2. Respaldo de seguridad OBLIGATORIO
+            realizarBackupManual();
+
+            // 3. UI Feedback
+            showToast("⏳ Conectando con Google Sheets...", "info");
+            const btnSync = event.target;
+            const textoOriginal = btnSync.textContent;
+            btnSync.textContent = "⏳ Descargando...";
+            btnSync.disabled = true;
+            
+            try {
+                // 4. Descargar datos (GET)
+                const response = await fetch(GOOGLE_SCRIPT_URL);
+                
+                if (!response.ok) throw new Error('Error en la red');
+                
+                const dataNube = await response.json();
+                
+                if(dataNube && Array.isArray(dataNube)) {
+                    if(dataNube.length > 0) {
+                        // Reemplazamos la base de datos local
+                        db = dataNube;
+                        guardarDB(); // Guarda en localStorage
+                        
+                        // Refrescamos la pantalla
+                        renderDashboard();
+                        actualizarEstadisticas();
+                        actualizarBadgeCalendario();
+                        
+                        showToast(`✅ Se restauraron ${db.length} clientes desde la Nube`, "success");
+                    } else {
+                        showToast("⚠️ La base de datos en la nube está vacía", "warning");
+                    }
+                } else {
+                    throw new Error("Formato de datos incorrecto");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                showToast("❌ Error al descargar. Verifica tu internet.", "error");
+            } finally {
+                btnSync.textContent = textoOriginal;
+                btnSync.disabled = false;
+            }
         }
     </script>
 </body>
