@@ -6,7 +6,14 @@
     <meta name="theme-color" content="#1565c0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Ruta Comercial GT v10</title>
+    <!-- CSP para seguridad -->
+    <meta http-equiv="Content-Security-Policy" 
+          content="default-src 'self'; 
+                   script-src 'self' https://script.google.com; 
+                   style-src 'self' 'unsafe-inline';
+                   img-src 'self' data: blob:;
+                   connect-src 'self' https://script.google.com">
+  <title>Ruta Comercial GT v10</title>
     
     <style>
         /* ESTILOS BASE */
@@ -748,9 +755,13 @@
                     <span id="syncStatus">Última sincronización: Nunca</span>
                 </div>
             </div>
-            <div class="header-buttons">
+             <div class="header-buttons">
                 <button class="install-btn" id="installButton">📲 Instalar App</button>
                 <span id="notificacion-badge" class="badge hidden">0</span>
+                <button class="btn-icon btn-info" onclick="realizarBackupManual()" 
+                        style="font-size:11px; padding:5px 8px; font-weight:bold; background:#0288d1;">
+                    💾 Backup
+                </button>
                 <button class="btn-icon btn-warning" onclick="limpiarRuta()" style="font-size:11px; padding:5px 8px; color:black; font-weight:bold;">Limpiar Ruta</button>
             </div>
         </div>
@@ -1099,6 +1110,31 @@
         let db = JSON.parse(localStorage.getItem('db_clientes_v9')) || [];
         let ruta = JSON.parse(localStorage.getItem('db_ruta_v9')) || [];
         let filtrosReporteActual = { tipo: '', fecha: null, depto: null };
+       // === SISTEMA DE MIGRACIÓN (NUEVO) ===
+        function migrarDatosSiEsNecesario() {
+            const versionAlmacenada = localStorage.getItem('app_version');
+            const versionActual = 'v10';
+            
+            if (!versionAlmacenada || versionAlmacenada !== versionActual) {
+                console.log('Migrando datos...');
+                
+                // Migrar de v9 a v10
+                if (versionAlmacenada === 'v9') {
+                    // Mantener datos existentes (ya están en variables db y ruta)
+                    console.log('Migrando de v9 a v10');
+                }
+                
+                // Guardar nueva versión
+                localStorage.setItem('app_version', versionActual);
+                showToast(`✅ Datos migrados a versión ${versionActual}`, 'success');
+            }
+        }
+        
+        // Llamar después de cargar datos
+        migrarDatosSiEsNecesario();
+        // === FIN MIGRACIÓN ===
+        
+        let filtrosReporteActual = { tipo: '', fecha: null, depto: null };
         let rutaOptimizada = false;
         let ubicacionActual = null;
         let notificacionInterval = null;
@@ -1138,9 +1174,15 @@
         }
 
         // --- SANITIZACIÓN DE DATOS ---
-        function sanitizeInput(input) {
+       function sanitizeInput(input) {
             if (typeof input !== 'string') return input;
-            return input.replace(/[<>]/g, '').trim();
+            return input
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;")
+                .trim();
         }
 
         function validatePhone(phone) {
@@ -1167,7 +1209,21 @@
                 console.error("Error en backup:", e);
             }
         }
+ }
 
+        function limpiarBackupsAntiguos() {
+            const keys = Object.keys(localStorage);
+            const backups = keys.filter(k => k.startsWith('backup_'));
+            
+            if (backups.length > 5) { // Mantener solo últimos 5
+                backups.sort()
+                       .slice(0, backups.length - 5)
+                       .forEach(k => localStorage.removeItem(k));
+            }
+        }
+        
+        // Llamar periódicamente
+        setInterval(limpiarBackupsAntiguos, 24 * 60 * 60 * 1000); // Diario
         function realizarBackupManual() {
             const fecha = new Date().toISOString().replace(/[:.]/g, '-');
             const backupData = {
@@ -2577,6 +2633,27 @@
             const negocio = sanitizeInput(document.getElementById('negocio').value);
             
             // Validaciones
+            // === VALIDACIÓN DE COORDENADAS (NUEVO) ===
+            const lat = document.getElementById('lat').value;
+            const lng = document.getElementById('lng').value;
+            
+            if (lat && lat !== "MANUAL") {
+                if (isNaN(parseFloat(lat)) || isNaN(parseFloat(lng))) {
+                    showToast("Coordenadas GPS inválidas", "error");
+                    return;
+                }
+                
+                const latNum = parseFloat(lat);
+                const lngNum = parseFloat(lng);
+                
+                // Validar rango para Guatemala aproximadamente
+                if (latNum < 13.5 || latNum > 17.8 || lngNum < -92.3 || lngNum > -88.2) {
+                    if (!confirm("⚠️ Las coordenadas están fuera del rango típico de Guatemala. ¿Desea guardar de todos modos?")) {
+                        return;
+                    }
+                }
+            }
+            // === FIN VALIDACIÓN ===
             if(!negocio) {
                 showToast("El nombre del negocio es obligatorio", 'error');
                 return;
@@ -2644,12 +2721,20 @@
         
         function guardarDB() { 
             try {
-                localStorage.setItem('db_clientes_v9', JSON.stringify(db)); 
-                localStorage.setItem('db_ruta_v9', JSON.stringify(ruta)); 
+                const datosClientes = JSON.stringify(db);
+                const datosRuta = JSON.stringify(ruta);
+                
+                localStorage.setItem('db_clientes_v9', datosClientes); 
+                localStorage.setItem('db_ruta_v9', datosRuta); 
                 crearBackupAutomatico();
             } catch(e) {
-                showToast("❌ Error al guardar: " + e.message, 'error');
-                console.error("Error al guardar:", e);
+                if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+                    alert("⚠️ ¡MEMORIA LLENA! No se pueden guardar más datos. \n\nPor favor, exporta a CSV, sincroniza y elimina clientes antiguos o borra el historial del navegador.");
+                    showToast("❌ MEMORIA LLENA: Datos NO guardados", 'error');
+                } else {
+                    showToast("❌ Error al guardar: " + e.message, 'error');
+                    console.error("Error al guardar:", e);
+                }
             }
         }
 
@@ -3014,13 +3099,15 @@
                 },
                 body: JSON.stringify(db)
             })
-            .then(response => {
-                // Al usar no-cors, la respuesta es opaca. Asumimos éxito si no hay error de red.
-                showToast("✅ ¡Datos enviados a la Nube exitosamente!", "success");
+           .then(response => {
+                // Al usar no-cors, la respuesta es 'opaque' (opaca).
+                // No podemos confirmar el éxito real, solo que salió del dispositivo.
+                showToast("⚠️ Datos enviados (Sin confirmación del servidor). Verifica tu hoja de cálculo.", "warning");
+                
                 btnSync.textContent = textoOriginal;
                 btnSync.disabled = false;
                 
-                // Actualizar última sincronización
+                // Asumimos éxito para actualizar la hora, pero con precaución
                 const now = new Date();
                 lastSyncTime = now.toISOString();
                 localStorage.setItem('last_sync_time', lastSyncTime);
