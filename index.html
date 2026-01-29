@@ -3,32 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self';">
-    <title>Document</title>
+    <meta http-equiv="Content-Security-Policy" content="frame-src 'self' https://www.google.com; script-src 'self' https://www.google.com;" />
+    <title>Your Document Title</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>Title of Your Document</h1>
+        <h1>Welcome to My Website</h1>
     </header>
     <main>
         <form>
-            <label for="input-field">Input:</label>
-            <input type="text" id="input-field" style="padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
-            <button type="submit">Submit</button>
+            <input type="text" class="input-symmetric" style="min-height: auto; height: auto;">
         </form>
-    </main>
-    <div id="modal" style="display:none;">
-        <div>
-            <h2>Modal Title</h2>
-            <p>Modal content goes here.</p>
-            <button onclick="document.getElementById('modal').style.display='none';">Close</button>
+        <div class="modal" style="display: none;">
+            <p>This is a modal window!</p>
         </div>
-    </div>
-    <script>
-        // Sample script to handle modal display
-        function showModal() {
-            document.getElementById('modal').style.display = 'block';
-        }
-    </script>
+    </main>
+    <footer>
+        <p>&copy; 2026 Your Name</p>
+    </footer>
+    <script src="https://www.google.com/script.js"></script>
 </body>
 </html>
