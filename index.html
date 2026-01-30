@@ -1134,7 +1134,6 @@
         migrarDatosSiEsNecesario();
         // === FIN MIGRACIÓN ===
         
-        let filtrosReporteActual = { tipo: '', fecha: null, depto: null };
         let rutaOptimizada = false;
         let ubicacionActual = null;
         let notificacionInterval = null;
@@ -1209,7 +1208,6 @@
                 console.error("Error en backup:", e);
             }
         }
- }
 
         function limpiarBackupsAntiguos() {
             const keys = Object.keys(localStorage);
