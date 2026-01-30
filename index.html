@@ -3001,7 +3001,7 @@
             const rows = datos.map(c => {
                 return [
                     c.id,
-                    `"${(c.negocio || '').replace(/"/g, '""')}"`,
+                    `"${(c.negocio || '').replace(/"/g, "&quot;")}"`,
                     `"${(c.departamento || '').replace(/"/g, '""')}"`,
                     `"${(c.municipio || '').replace(/"/g, '""')}"`,
                     `"${(c.direccion || '').replace(/"/g, '""')}"`,
@@ -3063,7 +3063,7 @@
         }
 
         // --- FUNCIONES DE SINCRONIZACIÓN (NUBE) ---
-        function sincronizarDrive() {
+        function sincronizarDrive(event) {
             // 1. Validaciones básicas
             if(db.length === 0) {
                 showToast("No hay datos para sincronizar", "warning");
@@ -3119,7 +3119,7 @@
             });
         }
 
-        async function descargarDeDrive() {
+        async function descargarDeDrive(event) {
             if(!navigator.onLine) {
                 showToast("⚠️ Necesitas internet para descargar", "error");
                 return;
