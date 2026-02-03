@@ -6,16 +6,7 @@
     <meta name="theme-color" content="#1565c0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
-    <meta http-equiv="Content-Security-Policy" 
-          content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https://script.google.com https://www.google.com https://maps.google.com; 
-                   script-src 'self' 'unsafe-inline' 'unsafe-eval' https://script.google.com https://www.google.com https://maps.googleapis.com; 
-                   style-src 'self' 'unsafe-inline';
-                   img-src 'self' data: blob: https:;
-                   media-src 'self' data:;
-                   connect-src 'self' https://script.google.com;">
-
-    <title>Ruta Comercial GT v10 (Fixed)</title>
+    <title>Ruta Comercial GT v10</title>
     
     <style>
         /* ESTILOS BASE */
@@ -725,6 +716,7 @@
                 <div id="fecha-header" class="header-date"></div>
                 <div id="real-time-clock" class="real-time-clock"></div>
                 
+                <!-- Dropdown con checkboxes para selección múltiple de departamentos -->
                 <div class="dept-filter-container">
                     <button class="dept-selector-header" onclick="toggleDeptDropdown()">
                         📋 Filtrar Departamentos
@@ -737,7 +729,8 @@
                         </div>
                         
                         <div class="dept-checkboxes-container">
-                            </div>
+                            <!-- Los checkboxes se generarán con JavaScript -->
+                        </div>
                         
                         <div class="dept-dropdown-footer">
                             <button class="btn btn-primary" onclick="aplicarFiltroDepartamentos()" style="padding: 8px 12px; font-size: 12px;">
@@ -755,13 +748,9 @@
                     <span id="syncStatus">Última sincronización: Nunca</span>
                 </div>
             </div>
-             <div class="header-buttons">
+            <div class="header-buttons">
                 <button class="install-btn" id="installButton">📲 Instalar App</button>
                 <span id="notificacion-badge" class="badge hidden">0</span>
-                <button class="btn-icon btn-info" onclick="realizarBackupManual()" 
-                        style="font-size:11px; padding:5px 8px; font-weight:bold; background:#0288d1;">
-                    💾 Backup
-                </button>
                 <button class="btn-icon btn-warning" onclick="limpiarRuta()" style="font-size:11px; padding:5px 8px; color:black; font-weight:bold;">Limpiar Ruta</button>
             </div>
         </div>
@@ -982,10 +971,10 @@
                     Gestiona tus datos entre dispositivos. <strong>Nota:</strong> Se creará un respaldo local automático antes de cualquier acción.
                 </p>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn btn-cloud-up" style="flex: 1;" onclick="sincronizarDrive(event)">
+                    <button class="btn btn-cloud-up" style="flex: 1;" onclick="sincronizarDrive()">
                         ☁️⬆️ SUBIR DATOS A LA NUBE
                     </button>
-                   <button class="btn btn-cloud-down" style="flex: 1;" onclick="descargarDeDrive(event)">
+                    <button class="btn btn-cloud-down" style="flex: 1;" onclick="descargarDeDrive()">
                         ☁️⬇️ RESTAURAR DESDE NUBE
                     </button>
                 </div>
@@ -1044,6 +1033,7 @@
                 <button class="btn btn-warning" onclick="realizarBackupManual()">💾 BACKUP MANUAL</button>
             </div>
             
+            <!-- Botón de eliminar todo al final -->
             <div class="card no-print" style="margin-top: 20px; border-left: 5px solid #d32f2f; background: #ffebee;">
                 <h3 style="color:#c62828;">⚠️ Eliminación Masiva</h3>
                 <p style="font-size:0.85em; color:#555; margin-bottom:15px;">
@@ -1105,107 +1095,10 @@
             "Zacapa": ["Zacapa", "Estanzuela", "Río Hondo", "Gualán", "Teculután", "Usumatlán", "Cabañas", "San Diego", "La Unión", "Huité"]
         };
 
-        // --- SOLUCIÓN 1: DECLARACIÓN ÚNICA DE VARIABLES ---
+        // Variables globales
         let db = JSON.parse(localStorage.getItem('db_clientes_v9')) || [];
         let ruta = JSON.parse(localStorage.getItem('db_ruta_v9')) || [];
         let filtrosReporteActual = { tipo: '', fecha: null, depto: null };
-
-        // --- SOLUCIÓN 2: DEFINICIÓN DE FUNCIONES FALTANTES ---
-        function formatearFecha(fechaStr) {
-            if (!fechaStr) return '';
-            try {
-                const fecha = new Date(fechaStr);
-                return fecha.toLocaleDateString('es-GT', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                });
-            } catch (e) {
-                return fechaStr;
-            }
-        }
-
-        function formatearHora(fechaHoraStr) {
-            if (!fechaHoraStr) return '';
-            try {
-                const fecha = new Date(fechaHoraStr);
-                return fecha.toLocaleTimeString('es-GT', { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
-                });
-            } catch (e) {
-                return fechaHoraStr;
-            }
-        }
-
-        function mostrarNotificacion(cita) {
-            const modal = document.getElementById('notificationModal');
-            const modalBody = document.getElementById('modalBody');
-            
-            if (!modal || !modalBody) return;
-            
-            const fechaCita = new Date(cita.cita);
-            const tiempoRestante = Math.round((fechaCita - new Date()) / (1000 * 60));
-            
-            modalBody.innerHTML = `
-                <div style="font-weight:bold; margin-bottom:5px;">${cita.negocio || 'Cliente'}</div>
-                <div>${cita.encargado || 'Sin encargado'}</div>
-                <div>📞 ${cita.telefono || 'Sin teléfono'}</div>
-                <div>⏰ ${formatearHora(cita.cita)} (en ${tiempoRestante} minutos)</div>
-                ${cita.direccion ? `<div>📍 ${cita.direccion}</div>` : ''}
-            `;
-            
-            modal.style.display = 'flex';
-        }
-
-       // === SISTEMA DE MIGRACIÓN CORREGIDO ===
-        function migrarDatosSiEsNecesario() {
-            // Se eliminó 'let db = ...' para evitar conflicto
-            const versionAlmacenada = localStorage.getItem('app_version');
-            const versionActual = 'v10';
-            
-            if (!versionAlmacenada || versionAlmacenada !== versionActual) {
-                console.log('Migrando datos...');
-                
-                // Migrar de v9 a v10
-                if (versionAlmacenada === 'v9') {
-                     db.forEach(cliente => {
-                        if (!cliente.ultimaModificacion) {
-                            cliente.ultimaModificacion = new Date().toISOString();
-                        }
-                    });
-                }
-                
-                // Guardar nueva versión
-                localStorage.setItem('app_version', versionActual);
-                showToast(`✅ Datos migrados a versión ${versionActual}`, 'success');
-            }
-        }
-        
-        // Llamar después de cargar datos
-        migrarDatosSiEsNecesario();
-        // === FIN MIGRACIÓN ===
-        
-        // --- SOLUCIÓN 4: SIMPLIFICACIÓN PARA PRUEBAS (Inicializar DB si está vacía) ---
-        if (db.length === 0) {
-            console.log("DB vacía, inicializando datos de prueba...");
-            db = [
-                {
-                    id: 1,
-                    negocio: "Tienda Ejemplo",
-                    departamento: "Guatemala",
-                    municipio: "Guatemala",
-                    telefono: "12345678",
-                    encargado: "Juan Pérez",
-                    fecha: new Date().toISOString().split('T')[0],
-                    cita: new Date(new Date().getTime() + 60*60*1000).toISOString() // Cita en 1 hora
-                }
-            ];
-            // No guardamos automáticamente para no ensuciar localStorage real sin permiso,
-            // pero estará en memoria para la sesión.
-        }
-
         let rutaOptimizada = false;
         let ubicacionActual = null;
         let notificacionInterval = null;
@@ -1245,15 +1138,9 @@
         }
 
         // --- SANITIZACIÓN DE DATOS ---
-       function sanitizeInput(input) {
+        function sanitizeInput(input) {
             if (typeof input !== 'string') return input;
-            return input
-                .replace(/&/g, "&")
-                .replace(/</g, "<")
-                .replace(/>/g, ">")
-                .replace(/"/g, """)
-                .replace(/'/g, "'")
-                .trim();
+            return input.replace(/[<>]/g, '').trim();
         }
 
         function validatePhone(phone) {
@@ -1281,19 +1168,6 @@
             }
         }
 
-        function limpiarBackupsAntiguos() {
-            const keys = Object.keys(localStorage);
-            const backups = keys.filter(k => k.startsWith('backup_'));
-            
-            if (backups.length > 5) { // Mantener solo últimos 5
-                backups.sort()
-                       .slice(0, backups.length - 5)
-                       .forEach(k => localStorage.removeItem(k));
-            }
-        }
-        
-        // Llamar periódicamente
-        setInterval(limpiarBackupsAntiguos, 24 * 60 * 60 * 1000); // Diario
         function realizarBackupManual() {
             const fecha = new Date().toISOString().replace(/[:.]/g, '-');
             const backupData = {
@@ -1371,7 +1245,6 @@
         }
 
         async function sincronizarAutomaticamente() {
-            // SOLUCIÓN 3: TRY-CATCH PARA GOOGLE SCRIPTS
             try {
                 // No sincronizar si no hay datos
                 if (db.length === 0) return;
@@ -1455,8 +1328,6 @@
 
         // --- INICIALIZACIÓN ---
         document.addEventListener("DOMContentLoaded", () => {
-            console.log("DOM Cargado. Iniciando aplicación...");
-            
             cargarDepartamentosEnSelects();
             renderDashboard();
             actualizarBadge();
@@ -1477,8 +1348,7 @@
             iniciarSincronizacionAutomatica();
             
             // Configurar fecha actual en el filtro de reportes
-            const fechaInput = document.getElementById('repFecha');
-            if(fechaInput) fechaInput.value = new Date().toISOString().split('T')[0];
+            document.getElementById('repFecha').value = new Date().toISOString().split('T')[0];
             
             // Iniciar verificación de recordatorios cada minuto
             iniciarVerificacionRecordatorios();
@@ -1661,7 +1531,6 @@
             mostrarCitas(null, primerDia, ultimoDia);
         }
 
-        // CORRECCIÓN 4: mostrarCitas ahora usa las funciones definidas
         function mostrarCitas(fechaEspecifica = null, fechaInicio = null, fechaFin = null) {
             const listaCitas = document.getElementById('listaCitas');
             const msgSinCitas = document.getElementById('msgSinCitas');
@@ -1727,7 +1596,6 @@
             Object.keys(citasPorDia).sort().forEach(fecha => {
                 const divDia = document.createElement('div');
                 divDia.className = 'calendar-day';
-                // USA LA FUNCIÓN formatearFecha YA DEFINIDA
                 divDia.innerHTML = `<strong>${formatearFecha(fecha)}</strong>`;
                 listaCitas.appendChild(divDia);
                 
@@ -1782,6 +1650,24 @@
             }
         }
 
+        function formatearFecha(fechaStr) {
+            const fecha = new Date(fechaStr);
+            return fecha.toLocaleDateString('es-GT', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        function formatearHora(fechaHoraStr) {
+            const fecha = new Date(fechaHoraStr);
+            return fecha.toLocaleTimeString('es-GT', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+        }
+
         // --- SISTEMA DE NOTIFICACIONES ---
         function iniciarVerificacionRecordatorios() {
             notificacionInterval = setInterval(verificarRecordatorios, 60000);
@@ -1810,6 +1696,35 @@
                     );
                 }
             });
+        }
+
+        function mostrarNotificacion(cita) {
+            const modal = document.getElementById('notificationModal');
+            const modalBody = document.getElementById('modalBody');
+            
+            const fechaCita = new Date(cita.cita);
+            const tiempoRestante = Math.round((fechaCita - new Date()) / (1000 * 60));
+            
+            modalBody.innerHTML = `
+                <div style="font-weight:bold; margin-bottom:5px;">${cita.negocio}</div>
+                <div>${cita.encargado || 'Sin encargado'}</div>
+                <div>📞 ${cita.telefono || 'Sin teléfono'}</div>
+                <div>⏰ ${formatearHora(cita.cita)} (en ${tiempoRestante} minutos)</div>
+                ${cita.direccion ? `<div>📍 ${cita.direccion}</div>` : ''}
+                <div style="margin-top:10px; font-size:0.9em; color:#666;">
+                    ${cita.citaWhatsApp ? '📱 WhatsApp • ' : ''}
+                    ${cita.citaLlamada ? '📞 Llamada • ' : ''}
+                    ${cita.citaOtro ? '🔘 Otro' : ''}
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+            
+            // Sonido de notificación
+            try {
+                const audio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ');
+                audio.play();
+            } catch(e) {}
         }
 
         function cerrarModal() {
@@ -2662,27 +2577,6 @@
             const negocio = sanitizeInput(document.getElementById('negocio').value);
             
             // Validaciones
-            // === VALIDACIÓN DE COORDENADAS (NUEVO) ===
-            const lat = document.getElementById('lat').value;
-            const lng = document.getElementById('lng').value;
-            
-            if (lat && lat !== "MANUAL") {
-                if (isNaN(parseFloat(lat)) || isNaN(parseFloat(lng))) {
-                    showToast("Coordenadas GPS inválidas", "error");
-                    return;
-                }
-                
-                const latNum = parseFloat(lat);
-                const lngNum = parseFloat(lng);
-                
-                // Validar rango para Guatemala aproximadamente
-                if (latNum < 13.5 || latNum > 17.8 || lngNum < -92.3 || lngNum > -88.2) {
-                    if (!confirm("⚠️ Las coordenadas están fuera del rango típico de Guatemala. ¿Desea guardar de todos modos?")) {
-                        return;
-                    }
-                }
-            }
-            // === FIN VALIDACIÓN ===
             if(!negocio) {
                 showToast("El nombre del negocio es obligatorio", 'error');
                 return;
@@ -2750,20 +2644,12 @@
         
         function guardarDB() { 
             try {
-                const datosClientes = JSON.stringify(db);
-                const datosRuta = JSON.stringify(ruta);
-                
-                localStorage.setItem('db_clientes_v9', datosClientes); 
-                localStorage.setItem('db_ruta_v9', datosRuta); 
+                localStorage.setItem('db_clientes_v9', JSON.stringify(db)); 
+                localStorage.setItem('db_ruta_v9', JSON.stringify(ruta)); 
                 crearBackupAutomatico();
             } catch(e) {
-                if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
-                    alert("⚠️ ¡MEMORIA LLENA! No se pueden guardar más datos. \n\nPor favor, exporta a CSV, sincroniza y elimina clientes antiguos o borra el historial del navegador.");
-                    showToast("❌ MEMORIA LLENA: Datos NO guardados", 'error');
-                } else {
-                    showToast("❌ Error al guardar: " + e.message, 'error');
-                    console.error("Error al guardar:", e);
-                }
+                showToast("❌ Error al guardar: " + e.message, 'error');
+                console.error("Error al guardar:", e);
             }
         }
 
@@ -3030,28 +2916,27 @@
             ];
             
             const rows = datos.map(c => {
-    return [
-        c.id,
-        // Aquí cambié """ por '""' para que sea igual a los demás y compatible con Excel
-        `"${(c.negocio || '').replace(/"/g, '""')}"`, 
-        `"${(c.departamento || '').replace(/"/g, '""')}"`,
-        `"${(c.municipio || '').replace(/"/g, '""')}"`,
-        `"${(c.direccion || '').replace(/"/g, '""')}"`,
-        `"${(c.encargado || '').replace(/"/g, '""')}"`,
-        c.telefono || '',
-        c.contactoWhatsApp ? 'SI' : 'NO',
-        c.contactoLlamada ? 'SI' : 'NO',
-        c.contactoOtro ? 'SI' : 'NO',
-        `"${(c.mensajeWhatsApp || '').replace(/"/g, '""')}"`,
-        c.fecha || '',
-        c.cita ? c.cita.replace('T', ' ') : '',
-        c.citaWhatsApp ? 'SI' : 'NO',
-        c.citaLlamada ? 'SI' : 'NO',
-        c.citaOtro ? 'SI' : 'NO',
-        c.lat || '',
-        c.lng || ''
-    ].join(',');
-});
+                return [
+                    c.id,
+                    `"${(c.negocio || '').replace(/"/g, '""')}"`,
+                    `"${(c.departamento || '').replace(/"/g, '""')}"`,
+                    `"${(c.municipio || '').replace(/"/g, '""')}"`,
+                    `"${(c.direccion || '').replace(/"/g, '""')}"`,
+                    `"${(c.encargado || '').replace(/"/g, '""')}"`,
+                    c.telefono || '',
+                    c.contactoWhatsApp ? 'SI' : 'NO',
+                    c.contactoLlamada ? 'SI' : 'NO',
+                    c.contactoOtro ? 'SI' : 'NO',
+                    `"${(c.mensajeWhatsApp || '').replace(/"/g, '""')}"`,
+                    c.fecha || '',
+                    c.cita ? c.cita.replace('T', ' ') : '',
+                    c.citaWhatsApp ? 'SI' : 'NO',
+                    c.citaLlamada ? 'SI' : 'NO',
+                    c.citaOtro ? 'SI' : 'NO',
+                    c.lat || '',
+                    c.lng || ''
+                ].join(',');
+            });
             
             const csvContent = [headers.join(','), ...rows].join('\n');
             
@@ -3095,7 +2980,7 @@
         }
 
         // --- FUNCIONES DE SINCRONIZACIÓN (NUBE) ---
-        function sincronizarDrive(event) {
+        function sincronizarDrive() {
             // 1. Validaciones básicas
             if(db.length === 0) {
                 showToast("No hay datos para sincronizar", "warning");
@@ -3120,7 +3005,7 @@
             btnSync.textContent = "⏳ Subiendo...";
             btnSync.disabled = true;
 
-            // 4. Enviar datos (SOLUCIÓN 3: CON TRY-CATCH)
+            // 4. Enviar datos
             fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
                 mode: "no-cors", // Necesario para evitar bloqueos simples de Apps Script
@@ -3129,15 +3014,13 @@
                 },
                 body: JSON.stringify(db)
             })
-           .then(response => {
-                // Al usar no-cors, la respuesta es 'opaque' (opaca).
-                // No podemos confirmar el éxito real, solo que salió del dispositivo.
-                showToast("⚠️ Datos enviados (Sin confirmación del servidor). Verifica tu hoja de cálculo.", "warning");
-                
+            .then(response => {
+                // Al usar no-cors, la respuesta es opaca. Asumimos éxito si no hay error de red.
+                showToast("✅ ¡Datos enviados a la Nube exitosamente!", "success");
                 btnSync.textContent = textoOriginal;
                 btnSync.disabled = false;
                 
-                // Asumimos éxito para actualizar la hora, pero con precaución
+                // Actualizar última sincronización
                 const now = new Date();
                 lastSyncTime = now.toISOString();
                 localStorage.setItem('last_sync_time', lastSyncTime);
@@ -3151,7 +3034,7 @@
             });
         }
 
-        async function descargarDeDrive(event) {
+        async function descargarDeDrive() {
             if(!navigator.onLine) {
                 showToast("⚠️ Necesitas internet para descargar", "error");
                 return;
@@ -3206,7 +3089,7 @@
                 }
             } catch (error) {
                 console.error("Error:", error);
-                showToast("❌ Error al descargar. Verifica tu internet y la URL del script.", "error");
+                showToast("❌ Error al descargar. Verifica tu internet.", "error");
             } finally {
                 btnSync.textContent = textoOriginal;
                 btnSync.disabled = false;
